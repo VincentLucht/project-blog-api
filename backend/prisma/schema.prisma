@@ -1,0 +1,70 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL_LOCAL")
+}
+
+enum Roles {
+  BASIC
+  AUTHOR
+}
+
+model User {
+  id       String      @id @unique @default(uuid())
+  name     String      @unique @db.VarChar(25)
+  password String      @db.VarChar(255)
+  role     Roles
+  blogs    UserBlogs[]
+  comments Comments[]
+}
+
+model Blog {
+  id           String      @id @unique @default(uuid())
+  title        String      @db.VarChar(50)
+  is_published Boolean     @default(false)
+  content      String      @db.VarChar(50000)
+  posted_on    DateTime    @default(now())
+  updated_at   DateTime    @updatedAt
+  users        UserBlogs[]
+  comments     Comments[]
+}
+
+model UserBlogs {
+  id      Int    @id @unique @default(autoincrement())
+  blog    Blog   @relation(fields: [blog_id], references: [id])
+  blog_id String
+  user    User   @relation(fields: [user_id], references: [id])
+  user_id String
+
+  @@unique([blog_id, user_id])
+  @@index([blog_id])
+  @@index([user_id])
+}
+
+model Comments {
+  id        String   @id @unique @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  blog      Blog     @relation(fields: [blogId], references: [id])
+  blogId    String
+  text      String   @db.VarChar(500)
+  posted_on DateTime @default(now())
+
+  // self-referential relationship for replying to comments
+  parent_comment    Comments?  @relation("CommentReplies", fields: [parent_comment_id], references: [id])
+  parent_comment_id String?
+  replies           Comments[] @relation("CommentReplies")
+
+  @@index([userId])
+  @@index([blogId])
+  @@index([parent_comment_id])
+}
