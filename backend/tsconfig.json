@@ -12,6 +12,6 @@
       "*": ["node_modules/*", "src/types/*"]
     }
   },
-  "include": ["src/**/*.ts", "app.ts"],
+  "include": ["src/**/*.ts", "app.ts", "src/util/asyncHandler.js", "src/util/asyncHandler.js"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }
