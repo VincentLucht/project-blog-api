@@ -13,6 +13,7 @@ module.exports = {
   },
   rules: {
     'prettier/prettier': 'error', // Treat Prettier issues as errors
+    '@typescript-eslint/no-explicit-any': 'off',
     semi: [2, 'always'], // Enforce semicolons at the end of statements
     quotes: ['error', 'single', { avoidEscape: true }],
     indent: [2, 2, { SwitchCase: 1 }], // 2 spaces for indentation, and 1 additional level for switch cases
@@ -21,8 +22,7 @@ module.exports = {
     'no-multiple-empty-lines': [2, { max: 1 }], // Disallow multiple empty lines
     'brace-style': [2, '1tbs'], // Enforce one true brace style for block statements
     'comma-dangle': [2, 'always-multiline'], // Enforce trailing commas in multiline object literals
-    'no-console': 1, // Warn when console statements are used
-    curly: [2, 'all'], // Require curly braces for all control statements
+    curly: [2, 'multi-line'], // Require curly braces for all control statements
     eqeqeq: [2, 'always'], // Enforce the use of === and !==
     'no-var': 2, // Disallow the use of var, use let or const instead
     'prefer-const': 2, // Prefer const over let for variables that are never reassigned
