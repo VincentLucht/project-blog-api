@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import { Request, Response } from 'express';
 import { db } from '../database/db';
 import { validationResult } from 'express-validator';
@@ -12,8 +13,24 @@ class UserController {
     }
 
     const { name, password, role } = req.body;
-    await db.createUser(name, password, role);
-    res.status(201).json({ message: 'User created successfully' });
+
+    try {
+      await db.createUser(name, password, role);
+      res.status(201).json({ message: 'User created successfully' });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        // Check if the error is a unique constraint violation
+        if (error.code === 'P2002') {
+          return res
+            .status(409)
+            .json({ message: 'A user with this name already exists.' });
+        }
+      } else {
+        // Handle other errors
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+      }
+    }
   });
 
   getAllUsers = asyncHandler(async (req: Request, res: Response) => {
