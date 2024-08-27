@@ -1,27 +1,62 @@
 import { PrismaClient, Roles } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
+async function hashPassword(password: string): Promise<string> {
+  const saltRounds = 10;
+  return bcrypt.hash(password, saltRounds);
+}
+
 async function main() {
-  // Create 5 users
+  // Delete all existing table content
+  console.log('Deleting existing records...');
+  await prisma.comments.deleteMany({});
+  await prisma.userBlogs.deleteMany({});
+  await prisma.blog.deleteMany({});
+  await prisma.user.deleteMany({});
+  console.log('All existing records deleted.');
+
+  // Create 5 users with hashed passwords
   const users = await Promise.all([
     prisma.user.create({
-      data: { name: 'Alice', password: 'pass123', role: Roles.AUTHOR },
+      data: {
+        name: 'Alice',
+        password: await hashPassword('pass123'),
+        role: Roles.AUTHOR,
+      },
     }),
     prisma.user.create({
-      data: { name: 'Bob', password: 'secure456', role: Roles.BASIC },
+      data: {
+        name: 'Bob',
+        password: await hashPassword('secure456'),
+        role: Roles.BASIC,
+      },
     }),
     prisma.user.create({
-      data: { name: 'Charlie', password: 'ch@rlie789', role: Roles.AUTHOR },
+      data: {
+        name: 'Charlie',
+        password: await hashPassword('ch@rlie789'),
+        role: Roles.AUTHOR,
+      },
     }),
     prisma.user.create({
-      data: { name: 'David', password: 'd@vid101', role: Roles.BASIC },
+      data: {
+        name: 'David',
+        password: await hashPassword('d@vid101'),
+        role: Roles.BASIC,
+      },
     }),
     prisma.user.create({
-      data: { name: 'Eva', password: 'ev@202', role: Roles.AUTHOR },
+      data: {
+        name: 'Eva',
+        password: await hashPassword('ev@202'),
+        role: Roles.AUTHOR,
+      },
     }),
   ]);
 
+  // The rest of your code remains the same
   // Create blogs for authors
   const blogs = await Promise.all([
     prisma.blog.create({
@@ -75,7 +110,7 @@ async function main() {
     }),
   ]);
 
-  console.log('Added users, blogs, and comments');
+  console.log('Added users with hashed passwords, blogs, and comments');
 }
 
 main()
