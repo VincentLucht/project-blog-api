@@ -2,7 +2,7 @@ import { body } from 'express-validator';
 // prettier-ignore
 
 class Validator {
-  createUserRules() {
+  signUpRules() {
     return [
       body('name').trim()
         .isLength({ min: 1 })
@@ -24,7 +24,18 @@ class Validator {
     ];
   }
 
-  createBlogRules() {
+  loginRules() {
+    return [
+      body('name').trim()
+        .notEmpty()
+        .withMessage('Name is required'),
+      body('password').trim()
+        .notEmpty()
+        .withMessage('Password is required'),
+    ];
+  }
+
+  blogRules() {
     return [
       body('title')
         .trim()
@@ -42,18 +53,7 @@ class Validator {
 
       body('is_published')
         .isBoolean()
-        .withMessage('Published must be a boolean value'),
-    ];
-  }
-
-  loginRules() {
-    return [
-      body('name').trim()
-        .notEmpty()
-        .withMessage('Name is required'),
-      body('password').trim()
-        .notEmpty()
-        .withMessage('Password is required'),
+        .withMessage('Published must be Yes or No'),
     ];
   }
 }
