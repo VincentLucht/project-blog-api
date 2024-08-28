@@ -4,11 +4,7 @@ import { PrismaClient } from '@prisma/client';
 import { Roles } from '@prisma/client';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
-import {
-  Strategy as JwtStrategy,
-  ExtractJwt,
-  StrategyOptions,
-} from 'passport-jwt';
+import { Strategy as JwtStrategy, ExtractJwt, StrategyOptions } from 'passport-jwt';
 
 import { checkValidationError } from '../util/checkValidationError';
 
@@ -79,9 +75,7 @@ class AuthController {
         const token = jwt.sign(payload, this.secretKey, { expiresIn: '1 day' });
         return res.json({ success: true, token: `Bearer ${token}` });
       } else {
-        return res
-          .status(401)
-          .json({ success: false, message: 'Authentication failed' });
+        return res.status(401).json({ success: false, message: 'Authentication failed' });
       }
     } catch (error) {
       return res.status(500).json({ success: false, message: error });
@@ -89,18 +83,14 @@ class AuthController {
   }
 
   authenticateJwt(req: Request, res: Response, next: NextFunction) {
-    passport.authenticate(
-      'jwt',
-      { session: false },
-      (error: any, user: User | false | null) => {
-        if (error) return next(error);
+    passport.authenticate('jwt', { session: false }, (error: any, user: User | false | null) => {
+      if (error) return next(error);
 
-        if (!user) return res.status(401).json({ message: 'Unauthorized' });
+      if (!user) return res.status(401).json({ message: 'Unauthorized' });
 
-        (req as AuthenticatedRequest).user = user;
-        next();
-      },
-    )(req, res, next);
+      (req as AuthenticatedRequest).user = user;
+      next();
+    })(req, res, next);
   }
 }
 
