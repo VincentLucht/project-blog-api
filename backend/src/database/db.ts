@@ -18,14 +18,29 @@ class DB {
   }
 
   async createBlog(
-    blogId: string,
     userId: string,
     title: string,
-    is_published: boolean,
     content: string,
-    posted_on: Date,
-    updated_at: Date,
-  ) {}
+    is_published: boolean,
+  ) {
+    // insert the user and use "connect" to create the relationship
+    const blog = await prisma.blog.create({
+      data: {
+        title,
+        content,
+        is_published,
+        users: {
+          create: {
+            user: {
+              connect: { id: userId },
+            },
+          },
+        },
+      },
+    });
+
+    return blog;
+  }
 
   async getAllUsers() {
     const allUsers = await prisma.user.findMany();
