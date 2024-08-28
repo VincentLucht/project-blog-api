@@ -17,12 +17,7 @@ class DB {
     });
   }
 
-  async createBlog(
-    userId: string,
-    title: string,
-    content: string,
-    is_published: boolean,
-  ) {
+  async createBlog(userId: string, title: string, content: string, is_published: boolean) {
     // insert the user and use "connect" to create the relationship
     const blog = await prisma.blog.create({
       data: {
@@ -40,6 +35,19 @@ class DB {
     });
 
     return blog;
+  }
+
+  async updateBlog(blogId: string, title: string, is_published: boolean, content: string) {
+    await prisma.blog.update({
+      where: {
+        id: blogId,
+      },
+      data: {
+        title,
+        is_published,
+        content,
+      },
+    });
   }
 
   async getAllUsers() {
@@ -82,6 +90,19 @@ class DB {
     });
 
     return blogWithComments;
+  }
+
+  async isInBlogAuthors(authorId: string, blogId: string) {
+    const test = await prisma.userBlogs.findUnique({
+      where: {
+        blog_id_user_id: {
+          blog_id: blogId,
+          user_id: authorId,
+        },
+      },
+    });
+
+    return test;
   }
 }
 
