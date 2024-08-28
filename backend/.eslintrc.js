@@ -2,17 +2,13 @@
 module.exports = {
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', 'prettier'],
-  extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:prettier/recommended',
-  ],
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended'],
   parserOptions: {
     ecmaVersion: 2020,
     sourceType: 'module',
   },
   rules: {
-    'prettier/prettier': 'error', // Treat Prettier issues as errors
+    'prettier/prettier': ['error', { endOfLine: 'auto' }],
     '@typescript-eslint/no-explicit-any': 'off',
     semi: [2, 'always'], // Enforce semicolons at the end of statements
     quotes: ['error', 'single', { avoidEscape: true }],
@@ -22,7 +18,7 @@ module.exports = {
     'no-multiple-empty-lines': [2, { max: 1 }], // Disallow multiple empty lines
     'brace-style': [2, '1tbs'], // Enforce one true brace style for block statements
     'comma-dangle': [2, 'always-multiline'], // Enforce trailing commas in multiline object literals
-    curly: [2, 'multi-line'], // Require curly braces for all control statements
+    curly: [2, 'multi-line', 'consistent'], // Require curly braces for all control statements
     eqeqeq: [2, 'always'], // Enforce the use of === and !==
     'no-var': 2, // Disallow the use of var, use let or const instead
     'prefer-const': 2, // Prefer const over let for variables that are never reassigned
