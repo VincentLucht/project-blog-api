@@ -7,7 +7,7 @@ import bcrypt from 'bcrypt';
 
 import { checkValidationError } from '../util/checkValidationError';
 import { AuthenticatedRequest } from './authController';
-import { safeParseBool } from '../util/safeConvertBool';
+import { safeParseBool } from '../util/safeConvertBoolean';
 
 class UserController {
   createUser = asyncHandler(async (req: Request, res: Response) => {
