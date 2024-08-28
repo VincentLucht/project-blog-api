@@ -7,16 +7,13 @@ import token from '../middleware/token';
 const router = express.Router();
 
 // CREATE
-router.post(
-  '/users/sign-up',
-  validator.createUserRules(),
-  userController.createUser,
-);
+router.post('/sign-up', validator.createUserRules(), userController.createUser);
 
 router.post(
-  '/blogs/:id',
+  '/blogs',
   token.extract,
   token.verify,
+  validator.createBlogRules(),
   blogController.createBlog,
 );
 
@@ -32,7 +29,7 @@ router.get('/blogs/:id', blogController.getBlogWithComments);
 // DELETE
 
 // LOGGING IN
-router.post('/login', authController.logIn);
+router.post('/login', validator.loginRules(), authController.logIn);
 router.get('/protected', authController.authenticateJwt, (req, res) => {
   res.json({
     message: 'You are logged in and can access the protected route!',
