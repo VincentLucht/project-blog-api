@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Prisma, Roles } from '@prisma/client';
 import { Request, Response } from 'express';
 import { db } from '../database/db';
 import { asyncHandler } from '../util/asyncHandler';
@@ -7,6 +7,7 @@ import bcrypt from 'bcrypt';
 
 import { checkValidationError } from '../util/checkValidationError';
 import { AuthenticatedRequest } from './authController';
+import { safeParseBool } from '../util/safeConvertBool';
 
 class UserController {
   createUser = asyncHandler(async (req: Request, res: Response) => {
@@ -22,9 +23,7 @@ class UserController {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         // Check if the user already exists
         if (error.code === 'P2002') {
-          return res
-            .status(409)
-            .json({ message: 'A user with this name already exists.' });
+          return res.status(409).json({ message: 'A user with this name already exists.' });
         }
       } else {
         console.error(error);
@@ -45,6 +44,12 @@ class UserController {
   });
 }
 
+interface User {
+  id: string;
+  name: string;
+  role: Roles;
+}
+
 class BlogController {
   private secretKey: string;
 
@@ -54,25 +59,9 @@ class BlogController {
       throw new Error('SECRET_KEY is not defined in environment variables');
     }
 
-    this.createBlog = this.createBlog.bind(this);
     this.getAllBlogs = this.getAllBlogs.bind(this);
+    this.createBlog = this.createBlog.bind(this);
   }
-
-  createBlog = asyncHandler(
-    async (req: AuthenticatedRequest, res: Response) => {
-      const { user } = req;
-
-      if (!user) return res.status(401).json({ message: 'Unauthorized' });
-      if (checkValidationError(req, res)) return;
-
-      const { title, content, is_published } = req.body;
-
-      const userId = user.id;
-      const blog = await db.createBlog(userId, title, content, is_published);
-
-      return res.json({ message: 'Blog created successfully', user, blog });
-    },
-  );
 
   getAllBlogs = asyncHandler(async (req: Request, res: Response) => {
     const { token } = req;
@@ -96,6 +85,40 @@ class BlogController {
     const blogId = req.params.id;
     const blog = await db.getBlogWithComments(blogId);
     return res.json({ data: blog });
+  });
+
+  createBlog = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    const { user } = req;
+
+    if (!user) return res.status(401).json({ message: 'Unauthorized' });
+    if (checkValidationError(req, res)) return;
+
+    const { title, content, is_published } = req.body;
+
+    const userId = user.id;
+    const blog = await db.createBlog(userId, title, content, is_published);
+
+    return res.json({ message: 'Blog created successfully', user, blog });
+  });
+
+  updateBlog = asyncHandler(async (req: Request, res: Response) => {
+    if (checkValidationError(req, res)) return;
+
+    const user = req.user as User | undefined;
+    if (!user) return res.status(401).json({ message: 'You are not logged in!' });
+
+    //  check if user is allowed to edit blog
+    if (user.role !== 'AUTHOR') return res.status(403).json({ error: 'Access denied, you are not an author' });
+
+    // check if blog exists and if user is author
+    const blogId = req.params.id;
+    if (!(await db.isInBlogAuthors(user.id, blogId))) return res.status(403).json({ error: 'Forbidden' });
+
+    // update the blog
+    const { title, is_published, content } = req.body;
+    await db.updateBlog(blogId, title, safeParseBool(is_published), content);
+
+    return res.json({ message: 'Blog update successful' });
   });
 }
 
