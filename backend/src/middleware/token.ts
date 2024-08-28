@@ -48,7 +48,7 @@ class Token {
       if (error) {
         res.sendStatus(403);
       } else {
-        req.authData = authData; // Attach authData to the request object
+        req.user = authData;
         next();
       }
     });
