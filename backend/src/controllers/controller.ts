@@ -1,34 +1,34 @@
 import { Prisma } from '@prisma/client';
 import { Request, Response } from 'express';
 import { db } from '../database/db';
-import { validationResult } from 'express-validator';
 import { asyncHandler } from '../util/asyncHandler';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+
+import { checkValidationError } from '../util/checkValidationError';
+import { AuthenticatedRequest } from './authController';
 
 class UserController {
   createUser = asyncHandler(async (req: Request, res: Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
+    if (checkValidationError(req, res)) return;
 
     const { name, password, role } = req.body;
 
     try {
-      await db.createUser(name, password, role);
-      res.status(201).json({ message: 'User created successfully' });
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await db.createUser(name, hashedPassword, role);
+      return res.status(201).json({ message: 'User created successfully' });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        // Check if the error is a unique constraint violation
+        // Check if the user already exists
         if (error.code === 'P2002') {
           return res
             .status(409)
             .json({ message: 'A user with this name already exists.' });
         }
       } else {
-        // Handle other errors
         console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+        return res.status(500).json({ message: 'Internal server error' });
       }
     }
   });
@@ -41,39 +41,53 @@ class UserController {
   getUser = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.params.id;
     const user = await db.getUserById(userId);
-    res.json({ data: user });
+    return res.json({ data: user });
   });
 }
 
 class BlogController {
-  createBlog = asyncHandler(async (req: Request, res: Response) => {
-    // check if user exists
-    const userId = req.params.id;
-    const user = await db.getUserById(userId);
-    if (!user) {
-      return res.status(400).json({ message: 'User not found' });
-    }
+  private secretKey: string;
 
-    return res.json({ data: user });
-  });
-
-  getAllBlogs = asyncHandler(async (req: Request, res: Response) => {
-    const secretKey = process.env.SECRET_KEY;
-    if (!secretKey) {
+  constructor() {
+    this.secretKey = process.env.SECRET_KEY || '';
+    if (!this.secretKey) {
       throw new Error('SECRET_KEY is not defined in environment variables');
     }
 
+    this.createBlog = this.createBlog.bind(this);
+    this.getAllBlogs = this.getAllBlogs.bind(this);
+  }
+
+  createBlog = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response) => {
+      const { user } = req;
+
+      if (!user) return res.status(401).json({ message: 'Unauthorized' });
+      if (checkValidationError(req, res)) return;
+
+      const { title, content, is_published } = req.body;
+
+      const userId = user.id;
+      const blog = await db.createBlog(userId, title, content, is_published);
+
+      return res.json({ message: 'Blog created successfully', user, blog });
+    },
+  );
+
+  getAllBlogs = asyncHandler(async (req: Request, res: Response) => {
     const { token } = req;
     if (!token) {
       return res.status(401).json({ error: 'No token provided' });
     }
 
-    jwt.verify(token, secretKey, async (error: any, authData: any) => {
+    jwt.verify(token, this.secretKey, async (error: any, authData: any) => {
       if (error) {
-        res.sendStatus(403);
+        res.status(403).json({
+          data: 'You are not logged in.',
+        });
       } else {
         const allBlogs = await db.getAllBlogs();
-        res.json({ data: allBlogs, authData });
+        return res.json({ data: allBlogs, authData });
       }
     });
   });
@@ -81,7 +95,7 @@ class BlogController {
   getBlogWithComments = asyncHandler(async (req: Request, res: Response) => {
     const blogId = req.params.id;
     const blog = await db.getBlogWithComments(blogId);
-    res.json({ data: blog });
+    return res.json({ data: blog });
   });
 }
 
