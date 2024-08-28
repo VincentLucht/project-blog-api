@@ -7,15 +7,9 @@ import token from '../middleware/token';
 const router = express.Router();
 
 // CREATE
-router.post('/sign-up', validator.createUserRules(), userController.createUser);
+router.post('/sign-up', validator.signUpRules(), userController.createUser);
 
-router.post(
-  '/blogs',
-  token.extract,
-  token.verify,
-  validator.createBlogRules(),
-  blogController.createBlog,
-);
+router.post('/blogs', token.extract, token.verify, validator.blogRules(), blogController.createBlog);
 
 // READ
 router.get('/users', token.extract, token.verify, userController.getAllUsers);
@@ -25,8 +19,14 @@ router.get('/blogs', token.extract, token.verify, blogController.getAllBlogs);
 router.get('/blogs/:id', blogController.getBlogWithComments);
 
 // UPDATE
+// TODO: update blogs => for other front end
+router.put('/blogs/:id', token.extract, token.verify, validator.blogRules(), blogController.updateBlog);
+
+// TODO update comments??
 
 // DELETE
+// TODO: delete blogs => for other front end
+// TODO delete comments
 
 // LOGGING IN
 router.post('/login', validator.loginRules(), authController.logIn);
