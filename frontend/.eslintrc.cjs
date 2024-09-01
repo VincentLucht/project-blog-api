@@ -30,12 +30,14 @@ module.exports = {
     "brace-style": [2, "1tbs"], // Enforce one true brace style for block statements
     "comma-dangle": [2, "always-multiline"], // Enforce trailing commas in multiline object literals
     "no-console": 1, // Warn when console statements are used
-    "curly": [2, "all"], // Require curly braces for all control statements
+    "curly": [2, "multi-line"], // Require curly braces for all control statements
     "eqeqeq": [2, "always"], // Enforce the use of === and !==
     "no-var": 2, // Disallow the use of var, use let or const instead
     "prefer-const": 2, // Prefer const over let for variables that are never reassigned
     "arrow-spacing": [2, { "before": true, "after": true }], // Enforce consistent spacing before and after the arrow in arrow functions
     "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }], // Disallow unused variables
+    "@typescript-eslint/no-misused-promises": ["error",{"checksVoidReturn": false}], 
+    "@typescript-eslint/consistent-indexed-object-style": "off",
     "key-spacing": [2, { "beforeColon": false, "afterColon": true }], // Enforce consistent spacing between keys and values in object literals
     "keyword-spacing": [2, { "before": true, "after": true }], // Enforce consistent spacing before and after keywords
     "space-infix-ops": 2, // Require spaces around infix operators
