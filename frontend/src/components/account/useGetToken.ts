@@ -1,0 +1,14 @@
+import { useAuthContext } from '../auth/useAuthContext';
+import { jwtDecode } from 'jwt-decode'; // Make sure to import jwtDecode
+
+interface User {
+  id: string;
+  name: string;
+  role: 'BASIC' | 'AUTHOR';
+}
+
+export function useGetToken() {
+  const { token } = useAuthContext();
+  if (!token) return null;
+  return jwtDecode<User>(token);
+}
