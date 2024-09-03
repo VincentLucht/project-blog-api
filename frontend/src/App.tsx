@@ -9,6 +9,7 @@ import Account from './components/account/Account';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/ReactToastify.css';
+import NotFound from './components/partials/NotFound';
 
 export const API_URL = 'http://localhost:3000';
 
@@ -25,7 +26,7 @@ export default function App() {
             <Route path="/" element={<Blogs />} />
             <Route path="/login" element={<Login />} />
             <Route path="/account" element={<Account />} />
-            <Route path="*" element="Not found" />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
 
