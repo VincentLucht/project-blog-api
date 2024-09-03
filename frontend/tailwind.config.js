@@ -32,8 +32,18 @@ export default {
         '.clamp-sm': {
           width: 'clamp(300px, 30vw, 400px)',
         },
+        '.clamp-card': {
+          width: 'clamp(400px, 40vw, 800px)',
+        },
         '.calc-h-vw': {
           height: 'calc(100vh - 64px)',
+        },
+        '.box-shadow-br': {
+          boxShadow: '10px 10px 2px 1px rgba(0, 0, 0, 0.15)',
+          borderRadius: '10px',
+        },
+        '.grid-auto-fit': {
+          gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))',
         },
       };
 
