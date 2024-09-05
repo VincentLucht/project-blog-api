@@ -7,8 +7,14 @@ interface User {
   role: 'BASIC' | 'AUTHOR';
 }
 
-export function useGetToken() {
+export function useGetUser() {
   const { token } = useAuthContext();
   if (!token) return null;
   return jwtDecode<User>(token);
+}
+
+export function useGetToken() {
+  const { token } = useAuthContext();
+  if (!token) return null;
+  return token;
 }
