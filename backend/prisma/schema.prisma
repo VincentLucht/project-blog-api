@@ -30,12 +30,29 @@ model User {
 model Blog {
   id           String      @id @unique @default(uuid())
   title        String      @db.VarChar(50)
+  summary      String      @db.VarChar(200) @default("No summary provided.")
   is_published Boolean     @default(false)
-  content      String      @db.VarChar(50000)
+  content      ContentBlock[]
   posted_on    DateTime    @default(now())
   updated_at   DateTime    @updatedAt
   users        UserBlogs[]
   comments     Comments[]
+}
+
+enum ContentTypes {
+  text
+  image
+  header
+}
+
+model ContentBlock {
+  id String @id @unique @default(uuid())
+  type ContentTypes
+  content String // Can be text content, image URL, etc.
+  order Int
+  blog Blog @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  blogId String
+  @@index([blogId])
 }
 
 model UserBlogs {
