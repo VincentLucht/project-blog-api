@@ -64,21 +64,19 @@ class BlogController {
   }
 
   getAllBlogs = asyncHandler(async (req: Request, res: Response) => {
-    const { token } = req;
-    if (!token) {
-      return res.status(401).json({ error: 'No token provided' });
-    }
+    const allBlogs = await db.getAllBlogs();
+    return res.json({ data: allBlogs });
+  });
 
-    jwt.verify(token, this.secretKey, async (error: any, authData: any) => {
-      if (error) {
-        res.status(403).json({
-          data: 'You are not logged in.',
-        });
-      } else {
-        const allBlogs = await db.getAllBlogs();
-        return res.json({ data: allBlogs, authData });
-      }
-    });
+  getAllBlogsWithUsers = asyncHandler(async (req: Request, res: Response) => {
+    const allBlogs = await db.getAllBlogsWithUser();
+    return res.json({ data: allBlogs });
+  });
+
+  getAllBlogsFromUser = asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.params.id;
+    const allBlogs = await db.getAllBlogsFromUser(userId);
+    return res.json({ data: allBlogs });
   });
 
   getBlogWithComments = asyncHandler(async (req: Request, res: Response) => {
@@ -93,10 +91,10 @@ class BlogController {
     if (!user) return res.status(401).json({ message: 'Unauthorized' });
     if (checkValidationError(req, res)) return;
 
-    const { title, content, is_published } = req.body;
+    const { title, content, is_published, content_blogs } = req.body;
 
     const userId = user.id;
-    const blog = await db.createBlog(userId, title, content, is_published);
+    const blog = await db.createBlog(userId, title, content, is_published, content_blogs);
 
     return res.json({ message: 'Blog created successfully', user, blog });
   });
@@ -116,7 +114,7 @@ class BlogController {
 
     // update the blog
     const { title, is_published, content } = req.body;
-    await db.updateBlog(blogId, title, safeParseBool(is_published), content);
+    // await db.updateBlog(blogId, title, safeParseBool(is_published), content);
 
     return res.json({ message: 'Blog update successful' });
   });
