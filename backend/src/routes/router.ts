@@ -14,8 +14,9 @@ router.post('/blogs', token.extract, token.verify, validator.blogRules(), blogCo
 // READ
 router.get('/users', token.extract, token.verify, userController.getAllUsers);
 router.get('/users/:id', token.extract, token.verify, userController.getUser);
+router.get('/users/blogs/:id', token.extract, token.verify, blogController.getAllBlogsFromUser);
 
-router.get('/blogs', token.extract, token.verify, blogController.getAllBlogs);
+router.get('/blogs', blogController.getAllBlogsWithUsers);
 router.get('/blogs/:id', blogController.getBlogWithComments);
 
 // UPDATE
@@ -35,6 +36,10 @@ router.get('/protected', authController.authenticateJwt, (req, res) => {
     message: 'You are logged in and can access the protected route!',
     user: req.user,
   });
+});
+
+router.get('/test', (req, res) => {
+  return res.json([{ title: 'test' }, { title: 'test2' }]);
 });
 
 // catch all route
