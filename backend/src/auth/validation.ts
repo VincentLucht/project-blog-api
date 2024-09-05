@@ -44,12 +44,10 @@ class Validator {
         .isLength({ max: 50 })
         .withMessage('Title must be at most 50 characters long'),
 
-      body('content')
+      body('contentBlocks')
         .trim()
         .notEmpty()
-        .withMessage('Content is required')
-        .isLength({ max: 50000 })
-        .withMessage('Content must be at most 50000 characters long'),
+        .withMessage('Your blog should not be empty!'),
 
       body('is_published')
         .isBoolean()
