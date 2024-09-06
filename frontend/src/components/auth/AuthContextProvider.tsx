@@ -9,6 +9,7 @@ import {
 } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { jwtDecode } from 'jwt-decode';
 
 // Define the type for context
 export interface AuthContextType {
@@ -50,6 +51,18 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
     toast.success('Successfully logged out');
     navigate('/');
   }, [navigate]);
+
+  // ? log the user out if the token is expired
+  if (token) {
+    const decodedToken = jwtDecode(token);
+    const currentTime = Math.floor(Date.now() / 1000);
+    if (decodedToken.exp) {
+      if (currentTime > decodedToken.exp) {
+        toast.warn('Due to not logging in for some time, you were logged out.');
+        logout();
+      }
+    }
+  }
 
   return (
     <LoginContext.Provider
