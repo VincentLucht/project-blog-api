@@ -1,4 +1,4 @@
-import { PrismaClient, Roles, ContentTypes } from '@prisma/client';
+import { PrismaClient, Roles, ContentTypes, ContentBlock } from '@prisma/client';
 const prisma = new PrismaClient();
 
 class DB {
@@ -40,29 +40,28 @@ class DB {
   }
 
   async updateBlog(
-    blogId: string,
+    id: string,
     title: string,
     summary: string,
     is_published: boolean,
-    contentBlocks: { id?: string; type: ContentTypes; content: string; order: number }[],
+    updated_at: string,
+    content: ContentBlock[],
   ) {
     await prisma.blog.update({
-      where: {
-        id: blogId,
-      },
+      where: { id },
       data: {
         title,
         summary,
         is_published,
+        updated_at,
         content: {
           deleteMany: {},
-          create: contentBlocks.filter((block) => !block.id),
-          update: contentBlocks
-            .filter((block) => block.id)
-            .map((block) => ({
-              where: { id: block.id },
-              data: { type: block.type, content: block.content, order: block.order },
-            })),
+          create: content.map(({ id, type, content, order }) => ({
+            id,
+            type,
+            content,
+            order,
+          })),
         },
       },
     });
