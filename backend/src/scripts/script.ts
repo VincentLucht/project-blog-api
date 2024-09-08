@@ -115,7 +115,7 @@ async function main() {
             },
             {
               type: ContentTypes.image,
-              content: 'https://example.com/tech-trends-image.jpg',
+              content: 'https://cdn-icons-png.flaticon.com/512/7134/7134618.png',
               order: 3,
             },
             {
@@ -160,7 +160,7 @@ async function main() {
             },
             {
               type: ContentTypes.image,
-              content: 'https://example.com/coding-corner-image.jpg',
+              content: 'https://cdn-icons-png.flaticon.com/512/2621/2621040.png',
               order: 3,
             },
             {
@@ -199,7 +199,7 @@ async function main() {
             },
             {
               type: ContentTypes.image,
-              content: 'https://example.com/blockchain-diagram.jpg',
+              content: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCmJhOoenheL4Zq4vKcwN-eJ4O3VSsREEtIA&s',
               order: 3,
             },
             {
