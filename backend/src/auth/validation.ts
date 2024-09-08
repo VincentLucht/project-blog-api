@@ -35,23 +35,33 @@ class Validator {
     ];
   }
 
+  // TODO add rules for summary
   blogRules() {
     return [
       body('title')
         .trim()
         .notEmpty()
         .withMessage('Title is required')
-        .isLength({ max: 50 })
-        .withMessage('Title must be at most 50 characters long'),
+        .isLength({ max: 100 })
+        .withMessage('Title must be at most 100 characters long'),
 
-      body('contentBlocks')
+      body('summary')
         .trim()
-        .notEmpty()
-        .withMessage('Your blog should not be empty!'),
+        .optional(),
 
+      // ? not necessary? state holds the is_published value
       body('is_published')
         .isBoolean()
         .withMessage('Published must be Yes or No'),
+
+      body('content')
+        .trim()
+        .custom((array) => {
+          if (!Array.isArray(array)) {
+            throw new Error('Are you sure you want to publish an empty array?');
+          }
+          return true;
+        }),
     ];
   }
 }
