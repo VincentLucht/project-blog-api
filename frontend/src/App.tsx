@@ -14,7 +14,7 @@ import Account from './components/account/Account';
 import { ToastContainer } from 'react-toastify';
 import NotFound from './components/partials/NotFound';
 import BlogHub from './components/blogs/CreateBlog/BlogHub';
-import CreateBlog from './components/blogs/CreateBlog/CreateBlog';
+import EditBlog from './components/blogs/CreateBlog/EditBlog';
 
 export const API_URL = 'http://localhost:3000';
 
@@ -26,12 +26,12 @@ export default function App() {
           <Header />
         </header>
 
-        <main className="flex flex-grow items-center justify-center">
+        <main className="flex flex-grow items-center justify-center p-4">
           <Routes>
             <Route path="/" element={<Blogs />} />
             <Route path="/:id" element={<BlogDetail />} />
             <Route path="/hub" element={<BlogHub />} />
-            <Route path="/hub/:id" element={<CreateBlog />} />
+            <Route path="/hub/:id" element={<EditBlog />} />
             <Route path="/login" element={<Login />} />
             <Route path="/account" element={<Account />} />
             <Route path="*" element={<NotFound />} />
