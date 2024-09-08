@@ -2,12 +2,10 @@ import { Prisma, Roles } from '@prisma/client';
 import { Request, Response } from 'express';
 import { db } from '../database/db';
 import { asyncHandler } from '../util/asyncHandler';
-import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
 import { checkValidationError } from '../util/checkValidationError';
 import { AuthenticatedRequest } from './authController';
-import { safeParseBool } from '../util/safeConvertBoolean';
 
 class UserController {
   createUser = asyncHandler(async (req: Request, res: Response) => {
@@ -113,8 +111,8 @@ class BlogController {
     if (!(await db.isInBlogAuthors(user.id, blogId))) return res.status(403).json({ error: 'Forbidden' });
 
     // update the blog
-    const { title, is_published, content } = req.body;
-    // await db.updateBlog(blogId, title, safeParseBool(is_published), content);
+    const { title, summary, is_published, updated_at, content } = req.body;
+    await db.updateBlog(blogId, title, summary, JSON.parse(is_published), updated_at, JSON.parse(content));
 
     return res.json({ message: 'Blog update successful' });
   });
