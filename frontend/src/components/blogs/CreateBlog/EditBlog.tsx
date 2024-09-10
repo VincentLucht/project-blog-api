@@ -1,24 +1,28 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useGetToken, useGetUser } from '../../account/useGetToken';
+
+import NotFound from '../../partials/NotFound';
 import NotLoggedIn from '../../partials/NotLoggedIn';
 import ConnectionError from '../../partials/ConnectionError';
 
-import contentRenderer from '../BlogDetail/contentRenderer';
-import { getPlaceholder } from './getPlaceholder';
-
-import { ContentTypes, Content, CompleteBlogItem } from '../BlogDetail/BlogDetail';
-import { toast } from 'react-toastify';
+import { ContentTypes, Content } from '../BlogDetail/BlogDetail';
 
 import { fetchSingularBlog } from '../BlogDetail/fetchSingularBlog';
-import { updateBlog } from './updateBlog';
+import { isAllowedToEdit } from './isAllowedToEdit';
+import AddContentBlockButton from './edit components/AddContentBlockButton';
 
 import { Reorder } from 'framer-motion';
-import { v4 as uuid } from 'uuid';
+
+import ContentRenderer from '../BlogDetail/ContentRenderer';
+import ContentTypeSelector from './edit components/ContentTypeSelecter';
+import AutoResizeTextArea from './edit components/AutoResizeTextArea';
+import UpdateBlogButton from './edit components/UpdateBlogButton';
 
 function EditBlog() {
   const { id } = useParams();
   const token = useGetToken();
+  const user = useGetUser();
 
   const [title, setTitle] = useState('');
   const [summary, setSummary] = useState('');
@@ -30,14 +34,14 @@ function EditBlog() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [permissionError, setPermissionError] = useState<boolean | null>(null);
 
   useEffect(() => {
     function getBlog() {
       fetchSingularBlog(id)
         .then((fetchedBlog) => {
           if (!fetchedBlog.data) {
-            // TODO add a nicer blog was not found message
-            setError('The blog was not found');
+            setPermissionError(true);
             setLoading(false);
             return;
           }
@@ -49,7 +53,6 @@ function EditBlog() {
           setLoading(false);
         })
         .catch((error) => {
-          // TODO add a nicer failed to load blog component
           setError(`Failed to load blog: ${error}`);
           setLoading(false);
         });
@@ -58,142 +61,100 @@ function EditBlog() {
     getBlog();
   }, [id]);
 
-  const addNewBlock = (newBlock: Content) => {
-    if (content === '') return;
-    if (blocks.length === 500) {
-      toast.warn(
-        'You have reached 500 blocks, which is half of the limit of 1000 blocks',
-      );
-    }
-    if (blocks.length >= 1000) {
-      toast.error('You have reached the limit of 1000 blocks', { autoClose: false });
-      toast.info('Please try to optimize by removing unnecessary blocks', {
-        autoClose: false,
-      });
-      return;
-    }
+  // ? check if user is allowed to edit blog
+  useEffect(() => {
+    function checkUserCanEditBlog() {
+      if (!user) return <NotLoggedIn />;
+      if (!id) return <div>Blog was not found</div>;
+      if (!token) return <div>Your login expired, please log in again</div>;
 
-    setBlocks([...blocks, newBlock]);
-  };
+      isAllowedToEdit(user?.id, id, token)
+        .then((isAllowed) => {
+          if (!isAllowed) setPermissionError(true);
+        })
+        .catch(() => {
+          return;
+        });
+    }
+    checkUserCanEditBlog();
+  }, [user, id, token]);
 
   const deleteBlock = (id: string) => {
     const newBlocks = blocks.filter((block) => block.id !== id);
     setBlocks(newBlocks);
   };
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-    setter: React.Dispatch<React.SetStateAction<any>>,
-  ) => {
-    setter(e.target.value);
-  };
-
-  if (!useGetUser()) return <NotLoggedIn />;
   if (loading) return <div>Loading...</div>;
-  if (error === 'Load failed') return <ConnectionError />;
-  if (error) return <div>Error: {error}</div>;
+  if (!user) return <NotLoggedIn />;
   if (!id) return <div>Blog was not found</div>;
   if (!token) return <div>Your login expired, please log in again</div>;
+  if (error === 'Load failed') return <ConnectionError />;
+  if (permissionError) return <NotFound />;
+  if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="grid w-full grid-cols-[30%_70%]">
-      <form className="flex-col gap-8 df">
-        {/* title */}
-        <input
-          className="p-3"
-          type="text"
-          value={title}
-          onChange={(e) => handleInputChange(e, setTitle)}
-          placeholder="Title"
-        />
-
-        {/* summary */}
-        <input
-          className="p-3"
-          type="text"
-          value={summary}
-          onChange={(e) => handleInputChange(e, setSummary)}
-          placeholder="Summary"
-        />
-
-        {/* is_published */}
-        <div className="gap-2 df">
-          <div className="gap-4 df">
-            <label htmlFor="is-published">Publish</label>
-            <input
-              type="checkbox"
-              id="is-published"
-              checked={isPublished}
-              onChange={(e) => setIsPublished(e.target.checked)}
-            />
-          </div>
-          <div>{isPublished ? 'Yes' : 'No'}</div>
-        </div>
-
-        <div>
-          {/* TODO: add a proper label here */}
-          <select
-            name=""
-            id=""
-            value={selectedType}
-            onChange={(e) => handleInputChange(e, setSelectedType)}
-          >
-            <option value="text">Text</option>
-            <option value="header">Header</option>
-            <option value="image">Image</option>
-          </select>
-
-          <input
-            type="text"
-            placeholder={getPlaceholder(selectedType)}
-            value={content}
-            onChange={(e) => handleInputChange(e, setContent)}
+    <div className="calc-h-vw-1 grid w-full grid-cols-[30%_70%]">
+      <div className="flex justify-start">
+        <form className="flex-col gap-8 df">
+          {/* title */}
+          <AutoResizeTextArea
+            label="title"
+            labelContent="Blog Title"
+            value={title}
+            setterFunction={setTitle}
           />
-        </div>
 
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            addNewBlock({
-              id: uuid(),
-              type: selectedType,
-              content,
-              order: blocks.length + 1,
-              blogId: id,
-            });
-          }}
-          className="border p-4"
-        >
-          Add Block
-        </button>
+          {/* summary */}
+          <AutoResizeTextArea
+            label="summary"
+            labelContent="Summary"
+            value={summary}
+            setterFunction={setSummary}
+          />
 
-        {/* Updating the blog */}
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            const updatedBlogItem: CompleteBlogItem = {
-              id, // ? blog id
-              title,
-              summary,
-              is_published: isPublished,
-              updated_at: new Date(Date.now()).toISOString(),
-              content: blocks,
-            };
-            updateBlog(updatedBlogItem, token)
-              .then(() => {
-                toast.success('Successfully updated the blog');
-              })
-              .catch((error: unknown) => {
-                console.log(error);
-              });
-          }}
-          className="border p-4"
-        >
-          Update Blog
-        </button>
-      </form>
+          {/* is_published */}
+          <div className="gap-2 df">
+            <div className="gap-4 df">
+              <label htmlFor="is-published">Publish</label>
+              <input
+                type="checkbox"
+                id="is-published"
+                checked={isPublished}
+                onChange={(e) => setIsPublished(e.target.checked)}
+              />
+            </div>
+            <div>{isPublished ? 'Yes' : 'No'}</div>
+          </div>
 
-      <div>
+          {/* ADD TYPES HERE */}
+          <ContentTypeSelector
+            selectedType={selectedType}
+            setSelectedType={setSelectedType}
+            content={content}
+            setContent={setContent}
+          />
+
+          <AddContentBlockButton
+            selectedType={selectedType}
+            content={content}
+            blocks={blocks}
+            setBlocks={setBlocks}
+            id={id}
+          />
+
+          {/* Updating the blog */}
+          <UpdateBlogButton
+            id={id}
+            title={title}
+            summary={summary}
+            isPublished={isPublished}
+            blocks={blocks}
+            token={token}
+          />
+        </form>
+      </div>
+
+      <div className="overflow-auto">
         <h2 className="h2">Blog preview</h2>
 
         <Reorder.Group
@@ -201,7 +162,11 @@ function EditBlog() {
           values={blocks}
           onReorder={setBlocks}
         >
-          <div>{contentRenderer(blocks, true, deleteBlock)}</div>
+          <ContentRenderer
+            content={blocks}
+            isCreationMode={true}
+            onDeleteBlock={deleteBlock}
+          />
         </Reorder.Group>
       </div>
     </div>
