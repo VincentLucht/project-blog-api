@@ -37,8 +37,8 @@ function UpdateBlogButton({
           .then(() => {
             toast.success('Successfully updated the blog');
           })
-          .catch((error) => {
-            toast.error(`An error occurred while updating the blog ${error}`);
+          .catch(() => {
+            toast.error('An error occurred while updating the blog');
           });
       }}
       className="border p-4"
