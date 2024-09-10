@@ -44,10 +44,14 @@ function BlogHub() {
 
   return (
     <div>
-      <h2 className="h2">These are your blogs:</h2>
-      <Link to="/hub">Create new (doesnt work)</Link>
+      <div className="mb-4 flex justify-between">
+        <h2 className="text-left h2">These are your blogs:</h2>
+        <div className="df">
+          <Link to="/hub">Create new (doesnt work)</Link>
+        </div>
+      </div>
 
-      <div>
+      <div className="grid gap-8">
         {userBlogs.map((blog, index) => (
           <Blog
             key={index}
@@ -56,6 +60,7 @@ function BlogHub() {
             posted_on={blog.blog.posted_on}
             summary={blog.blog.summary}
             readMore={false}
+            editMode={true}
           />
         ))}
       </div>
