@@ -5,6 +5,7 @@ interface AutoResizeTextAreaProps {
   labelContent: string | boolean;
   value: string;
   setterFunction: (newValue: string) => void;
+  maxHeight?: number;
 }
 
 function AutoResizeTextArea({
@@ -12,6 +13,7 @@ function AutoResizeTextArea({
   labelContent,
   value,
   setterFunction,
+  maxHeight = 200,
 }: AutoResizeTextAreaProps) {
   const placeholder = label.slice(0, 1).toUpperCase() + label.slice(1);
 
@@ -27,17 +29,26 @@ function AutoResizeTextArea({
   useEffect(() => {
     if (summaryTextareaRef.current) {
       summaryTextareaRef.current.style.height = 'auto';
+      const { scrollHeight } = summaryTextareaRef.current;
       summaryTextareaRef.current.style.height =
-        summaryTextareaRef.current.scrollHeight + 'px';
+        scrollHeight > maxHeight ? `${maxHeight}px` : `${scrollHeight}px`;
     }
-  }, [value]);
+  }, [value, maxHeight]);
 
   return (
-    <div className="flex flex-col">
-      {labelContent && <label htmlFor={label}>{labelContent}</label>}
+    <div className="flex flex-col gap-2">
+      {labelContent && (
+        <div className="grid grid-cols-[30%_70%]">
+          <label className="font-bold" htmlFor={label}>
+            {labelContent}
+          </label>
+          <div></div>
+        </div>
+      )}
 
       <textarea
         className="edit-textarea"
+        style={{ maxHeight: `${maxHeight}px` }}
         id={label}
         placeholder={placeholder}
         value={value}
