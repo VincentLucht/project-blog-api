@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchSingularBlog } from './fetchSingularBlog';
 import { useParams } from 'react-router-dom';
-import contentRenderer from './contentRenderer';
+import ContentRenderer from './ContentRenderer';
 
 interface User {
   id: string;
@@ -19,7 +19,14 @@ interface Comment {
   userId: string;
 }
 
-export type ContentTypes = 'text' | 'image' | 'header';
+export type ContentTypes =
+  | 'large header'
+  | 'header'
+  | 'small header'
+  | 'text'
+  | 'image'
+  | 'line break'
+  | 'code block';
 
 export interface Content {
   blogId: string;
@@ -30,14 +37,14 @@ export interface Content {
 }
 
 export interface CompleteBlogItem {
-  comments: Comment[];
-  content: Content[];
   id: string;
-  is_published?: true;
+  is_published?: boolean;
   posted_on?: string;
   summary: string;
   title: string;
   updated_at?: string;
+  comments?: Comment[];
+  content: Content[];
 }
 
 export function BlogDetail() {
@@ -50,6 +57,7 @@ export function BlogDetail() {
     function loadBlog() {
       fetchSingularBlog(id)
         .then((fetchedBlog) => {
+          console.log(fetchedBlog.data); // ! TODO remove this
           setBlog(fetchedBlog.data);
           setLoading(false);
         })
@@ -66,8 +74,10 @@ export function BlogDetail() {
   if (error) return <div>Error: {error}</div>;
   if (!blog) return <div>No blog found</div>;
 
-  const content = contentRenderer(blog.content);
-  console.log(content);
-
-  return <div>{content}</div>;
+  return (
+    <div>
+      <h1 className="mb-4 text-left text-5xl font-extrabold underline">{blog.title}</h1>
+      <ContentRenderer content={blog.content} />
+    </div>
+  );
 }
