@@ -47,8 +47,8 @@ enum ContentTypes {
 
 model ContentBlock {
   id String @id @unique @default(uuid())
-  type ContentTypes
-  content String // Can be text content, image URL, etc.
+  type ContentTypes // Can be text content, image URL, etc.
+  content String
   order Int
   blog Blog @relation(fields: [blogId], references: [id], onDelete: Cascade)
   blogId String
@@ -57,9 +57,9 @@ model ContentBlock {
 
 model UserBlogs {
   id      Int    @id @unique @default(autoincrement())
-  blog    Blog   @relation(fields: [blog_id], references: [id])
+  blog    Blog   @relation(fields: [blog_id], references: [id], onDelete: Cascade)
   blog_id String
-  user    User   @relation(fields: [user_id], references: [id])
+  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id String
 
   @@unique([blog_id, user_id])
@@ -69,15 +69,15 @@ model UserBlogs {
 
 model Comments {
   id        String   @id @unique @default(uuid())
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
-  blog      Blog     @relation(fields: [blogId], references: [id])
+  blog      Blog     @relation(fields: [blogId], references: [id], onDelete: Cascade)
   blogId    String
   text      String   @db.VarChar(500)
   posted_on DateTime @default(now())
 
   // self-referential relationship for replying to comments
-  parent_comment    Comments?  @relation("CommentReplies", fields: [parent_comment_id], references: [id])
+  parent_comment    Comments?  @relation("CommentReplies", fields: [parent_comment_id], references: [id], onDelete: Cascade)
   parent_comment_id String?
   replies           Comments[] @relation("CommentReplies")
 
