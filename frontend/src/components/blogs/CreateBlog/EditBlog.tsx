@@ -18,6 +18,7 @@ import ContentRenderer from '../BlogDetail/ContentRenderer';
 import ContentTypeSelector from './edit components/ContentTypeSelecter';
 import AutoResizeTextArea from './edit components/AutoResizeTextArea';
 import UpdateBlogButton from './edit components/UpdateBlogButton';
+import DeleteBlockButton from './edit components/DeleteBlogButton';
 
 function EditBlog() {
   const { id } = useParams();
@@ -112,6 +113,13 @@ function EditBlog() {
             setterFunction={setSummary}
           />
 
+          <ContentTypeSelector
+            selectedType={selectedType}
+            setSelectedType={setSelectedType}
+            content={content}
+            setContent={setContent}
+          />
+
           {/* is_published */}
           <div className="gap-2 df">
             <div className="gap-4 df">
@@ -126,14 +134,6 @@ function EditBlog() {
             <div>{isPublished ? 'Yes' : 'No'}</div>
           </div>
 
-          {/* ADD TYPES HERE */}
-          <ContentTypeSelector
-            selectedType={selectedType}
-            setSelectedType={setSelectedType}
-            content={content}
-            setContent={setContent}
-          />
-
           <AddContentBlockButton
             selectedType={selectedType}
             content={content}
@@ -142,7 +142,6 @@ function EditBlog() {
             id={id}
           />
 
-          {/* Updating the blog */}
           <UpdateBlogButton
             id={id}
             title={title}
@@ -151,6 +150,8 @@ function EditBlog() {
             blocks={blocks}
             token={token}
           />
+
+          <DeleteBlockButton blogId={id} token={token} />
         </form>
       </div>
 
