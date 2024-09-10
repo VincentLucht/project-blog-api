@@ -1,7 +1,7 @@
 import { useAuthContext } from '../auth/useAuthContext';
 import { jwtDecode } from 'jwt-decode'; // Make sure to import jwtDecode
 
-interface User {
+export interface User {
   id: string;
   name: string;
   role: 'BASIC' | 'AUTHOR';
