@@ -1,5 +1,4 @@
 import { CompleteBlogItem } from '../BlogDetail/BlogDetail';
-import { isAllowedToEdit } from './isAllowedToEdit';
 import { API_URL } from '../../../App';
 import { toast } from 'react-toastify';
 import { ValidationError } from '../../header/login/Login';
@@ -16,9 +15,8 @@ export async function updateBlog(updatedBlogItem: CompleteBlogItem, token: strin
   const { id, title, summary, is_published, updated_at, content } = updatedBlogItem;
   const user: User = jwtDecode(token);
 
-  if (!(await isAllowedToEdit(user.id, id, token))) {
-    toast.error('This is not your blog, please go away!');
-    throw new Error('Forbidden');
+  if (!user?.id) {
+    throw new Error('User not authenticated');
   }
 
   const response = await fetch(`${API_URL}/blogs/${id}`, {
@@ -35,6 +33,7 @@ export async function updateBlog(updatedBlogItem: CompleteBlogItem, token: strin
       content: JSON.stringify(content), // ? stringify array again
     }),
   });
+
   if (!response.ok) {
     const errorData = (await response.json()) as ErrorResponse;
 
