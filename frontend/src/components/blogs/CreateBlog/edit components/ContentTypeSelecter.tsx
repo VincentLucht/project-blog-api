@@ -16,12 +16,16 @@ function ContentTypeSelector({
   setContent,
 }: ContentTypeSelectorProps) {
   return (
-    <div>
-      <div>
-        <label htmlFor="blog-type">Type</label>
+    <div className="flex flex-col gap-2">
+      <div className="grid grid-cols-[30%_40%_30%]">
+        <label className="font-bold df" htmlFor="blog-type">
+          Type
+        </label>
+
         <select
           name="blog-type"
           id="blog-type"
+          className="rounded-3xl p-2"
           value={selectedType}
           onChange={(e) => setSelectedType(e.target.value as ContentTypes)}
         >
@@ -36,6 +40,8 @@ function ContentTypeSelector({
           <option value="line break">Line Break</option>
           <option value="code block">Code Block</option>
         </select>
+
+        <div className="hidden"></div>
       </div>
 
       <AutoResizeTextArea
@@ -43,6 +49,7 @@ function ContentTypeSelector({
         labelContent={false}
         value={content}
         setterFunction={setContent}
+        maxHeight={500}
       />
     </div>
   );
