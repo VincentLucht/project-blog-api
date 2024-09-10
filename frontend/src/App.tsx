@@ -26,7 +26,7 @@ export default function App() {
           <Header />
         </header>
 
-        <main className="flex flex-grow items-center justify-center p-4">
+        <main className="p-4">
           <Routes>
             <Route path="/" element={<Blogs />} />
             <Route path="/:id" element={<BlogDetail />} />
