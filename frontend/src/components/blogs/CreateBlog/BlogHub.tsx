@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useAuthContext } from '../../auth/useAuthContext';
 import { Link } from 'react-router-dom';
 import { useGetUser } from '../../account/useGetToken';
 import { useGetToken } from '../../account/useGetToken';
@@ -17,6 +18,7 @@ function BlogHub() {
   const [userBlogs, setUserBlogs] = useState<AllUserBlogs[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const { logout } = useAuthContext();
 
   const token = useGetToken();
   const user = useGetUser();
@@ -26,6 +28,9 @@ function BlogHub() {
       setLoading(true);
       fetchUserBlogs(user.id, token)
         .then((result) => {
+          if (!result.data) {
+            logout();
+          }
           setUserBlogs(result.data.blogs);
           setLoading(false);
         })
@@ -34,36 +39,46 @@ function BlogHub() {
           setLoading(false);
         });
     }
-  }, [user?.id, token]);
+  }, [user?.id, token, logout]);
 
   if (!user) return <NotLoggedIn />;
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
   if (!userBlogs) return <div>No user data available.</div>;
-  if (userBlogs.length === 0) return <div>No posts here...</div>;
 
   return (
     <div>
       <div className="mb-4 flex justify-between">
         <h2 className="text-left h2">These are your blogs:</h2>
         <div className="df">
-          <Link to="/hub">Create new (doesnt work)</Link>
+          <Link to="/hub">Create new (doesn&apos;t work)</Link>
         </div>
       </div>
 
-      <div className="grid gap-8">
-        {userBlogs.map((blog, index) => (
-          <Blog
-            key={index}
-            id={blog.blog.id}
-            title={blog.blog.title}
-            posted_on={blog.blog.posted_on}
-            summary={blog.blog.summary}
-            readMore={false}
-            editMode={true}
+      {userBlogs.length > 0 ? (
+        <div className="grid gap-8">
+          {userBlogs.map((blog, index) => (
+            <Blog
+              key={index}
+              id={blog.blog.id}
+              title={blog.blog.title}
+              posted_on={blog.blog.posted_on}
+              summary={blog.blog.summary}
+              readMore={false}
+              editMode={true}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="flex-col df">
+          <div className="mt-10 text-lg font-semibold">No blogs here...</div>
+          <img
+            className="w-96"
+            src="./catNothingFound.gif"
+            alt="gif of a cat poking a knitting ball"
           />
-        ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
