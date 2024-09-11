@@ -39,7 +39,7 @@ function AutoResizeTextArea({
     <div className="flex flex-col gap-2">
       {labelContent && (
         <div className="grid grid-cols-[30%_70%]">
-          <label className="font-bold" htmlFor={label}>
+          <label className="whitespace-nowrap font-bold" htmlFor={label}>
             {labelContent}
           </label>
           <div></div>
