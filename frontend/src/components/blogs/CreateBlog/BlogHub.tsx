@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useAuthContext } from '../../auth/useAuthContext';
-import { Link } from 'react-router-dom';
 import { useGetUser } from '../../account/useGetToken';
 import { useGetToken } from '../../account/useGetToken';
+
+import CreateBlogButton from './CreateBlogButton';
 import { Blog, BlogInterface } from '../Blog';
-import NotLoggedIn from '../../partials/NotLoggedIn';
 import fetchUserBlogs from './fetchUserBlogs';
+
+import NotLoggedIn from '../../partials/NotLoggedIn';
+import ConnectionError from '../../partials/ConnectionError';
 
 export interface AllUserBlogs {
   id: string;
@@ -18,6 +21,7 @@ function BlogHub() {
   const [userBlogs, setUserBlogs] = useState<AllUserBlogs[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [isConnectionError, setConnectionError] = useState<boolean>(false);
   const { logout } = useAuthContext();
 
   const token = useGetToken();
@@ -35,8 +39,13 @@ function BlogHub() {
           setLoading(false);
         })
         .catch((e) => {
-          setError(e instanceof Error ? e.message : 'An error occurred');
           setLoading(false);
+          if (e instanceof Error) {
+            if (e.message === 'Load failed') setConnectionError(true);
+            else setError(e.message);
+          } else {
+            setError('An error occurred');
+          }
         });
     }
   }, [user?.id, token, logout]);
@@ -44,6 +53,7 @@ function BlogHub() {
   if (!user) return <NotLoggedIn />;
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
+  if (isConnectionError) return <ConnectionError />;
   if (!userBlogs) return <div>No user data available.</div>;
 
   return (
@@ -51,7 +61,7 @@ function BlogHub() {
       <div className="mb-4 flex justify-between">
         <h2 className="text-left h2">These are your blogs:</h2>
         <div className="df">
-          <Link to="/hub">Create new (doesn&apos;t work)</Link>
+          <CreateBlogButton />
         </div>
       </div>
 
