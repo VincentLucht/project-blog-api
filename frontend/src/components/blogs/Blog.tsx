@@ -37,7 +37,9 @@ export function Blog({
       {readMore && (
         <div className="mt-4">
           {/* TODO: Add link to blog too */}
-          <Link className="text-blue-400 underline underline-offset-2">Read more</Link>
+          <Link to={`/${id}`} className="text-blue-400 underline underline-offset-2">
+            Read more
+          </Link>
         </div>
       )}
     </div>
