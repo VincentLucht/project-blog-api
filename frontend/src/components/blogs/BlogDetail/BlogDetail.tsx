@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { fetchSingularBlog } from './fetchSingularBlog';
 import { useParams } from 'react-router-dom';
 import ContentRenderer from './ContentRenderer';
+import NotFound from '../../partials/NotFound';
 
 interface User {
   id: string;
@@ -72,7 +73,7 @@ export function BlogDetail() {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
-  if (!blog) return <div>No blog found</div>;
+  if (!blog) return <NotFound />;
 
   return (
     <div>
