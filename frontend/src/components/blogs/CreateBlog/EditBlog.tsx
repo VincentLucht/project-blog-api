@@ -94,7 +94,7 @@ function EditBlog() {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="calc-h-vw-1 grid w-full grid-cols-[30%_70%]">
+    <div className="grid w-full grid-cols-[30%_70%] calc-h-vw-1">
       <div className="flex justify-start">
         <form className="flex-col gap-8 df">
           {/* title */}
