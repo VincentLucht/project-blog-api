@@ -16,9 +16,9 @@ function ContentTypeSelector({
   setContent,
 }: ContentTypeSelectorProps) {
   return (
-    <div className="flex flex-col gap-2">
-      <div className="grid grid-cols-[30%_40%_30%]">
-        <label className="font-bold df" htmlFor="blog-type">
+    <div className="flex w-full flex-col gap-2">
+      <div className="grid grid-cols-[40%_40%_20%]">
+        <label className="font-bold" htmlFor="blog-type">
           Type
         </label>
 
@@ -40,8 +40,6 @@ function ContentTypeSelector({
           <option value="line break">Line Break</option>
           <option value="code block">Code Block</option>
         </select>
-
-        <div className="hidden"></div>
       </div>
 
       <AutoResizeTextArea
