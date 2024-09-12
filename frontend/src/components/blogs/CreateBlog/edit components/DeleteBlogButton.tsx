@@ -14,6 +14,8 @@ function DeleteBlockButton({ blogId, token }: DeleteBlockButtonProps) {
     e.preventDefault();
 
     const areYouSure = confirm('Are you sure you want to delete this Blog?');
+    if (!areYouSure) return;
+
     const areYouReallySure = confirm('WARNING! This action is irreversible.');
 
     if (areYouSure && areYouReallySure) {
@@ -32,7 +34,10 @@ function DeleteBlockButton({ blogId, token }: DeleteBlockButtonProps) {
   };
 
   return (
-    <button className="border p-4" onClick={(e) => handleDelete(e)}>
+    <button
+      className="prm-button-red mt-6 h-12 w-full"
+      onClick={(e) => handleDelete(e)}
+    >
       Delete Blog
     </button>
   );
