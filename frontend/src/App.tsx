@@ -22,20 +22,22 @@ export default function App() {
   return (
     <AuthContextProvider>
       <div className="flex min-h-screen flex-col">
-        <header>
+        <header className="bottom-border-shadow fixed z-50 w-full bg-blue-600 p-4">
           <Header />
         </header>
 
-        <main className="p-4">
-          <Routes>
-            <Route path="/" element={<Blogs />} />
-            <Route path="/:id" element={<BlogDetail />} />
-            <Route path="/hub" element={<BlogHub />} />
-            <Route path="/hub/:id" element={<EditBlog />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/account" element={<Account />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+        <main className="mt-20 p-4 df sm:mt-28">
+          <div className="w-full max-w-7xl px-8">
+            <Routes>
+              <Route path="/" element={<Blogs />} />
+              <Route path="/hub" element={<BlogHub />} />
+              <Route path="/hub/:id" element={<EditBlog />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/account" element={<Account />} />
+              <Route path="/:id" element={<BlogDetail />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
         </main>
 
         <footer></footer>
