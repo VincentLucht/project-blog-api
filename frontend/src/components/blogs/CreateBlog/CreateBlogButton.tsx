@@ -1,8 +1,11 @@
 import { useGetToken } from '../../account/useGetToken';
+import { useNavigate } from 'react-router-dom';
 import { createBlog } from './createBlog';
 import { toast } from 'react-toastify';
 
 function CreateBlogButton() {
+  const navigate = useNavigate();
+
   const token = useGetToken();
   if (!token) {
     toast.error('You are not logged in!');
@@ -11,11 +14,21 @@ function CreateBlogButton() {
 
   const onClick = () => {
     createBlog(token)
-      .then(() => toast.success('Successfully created a new Blog'))
+      .then((blog) => {
+        navigate(`/hub/${blog.blog.id}`);
+        toast.success('Successfully created a new Blog');
+      })
       .catch(() => toast.error('There was an error while creating a new Blog'));
   };
 
-  return <button onClick={onClick}>Create new Blog</button>;
+  return (
+    <button
+      className="prm-button h-5/6 text-sm sm:h-full sm:text-base"
+      onClick={onClick}
+    >
+      Create new Blog
+    </button>
+  );
 }
 
 export default CreateBlogButton;

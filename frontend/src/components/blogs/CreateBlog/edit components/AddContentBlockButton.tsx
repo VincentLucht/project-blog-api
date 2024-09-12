@@ -51,7 +51,7 @@ function AddContentBlockButton({
   };
 
   return (
-    <button className="border p-4" onClick={handleClick}>
+    <button className="prm-button h-12 w-full" onClick={handleClick}>
       Add Content Block
     </button>
   );

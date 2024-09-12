@@ -41,7 +41,7 @@ function UpdateBlogButton({
             toast.error('An error occurred while updating the blog');
           });
       }}
-      className="border p-4"
+      className="prm-button h-12 w-full"
     >
       Update Blog
     </button>
