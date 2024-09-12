@@ -80,11 +80,6 @@ function EditBlog() {
     checkUserCanEditBlog();
   }, [user, id, token]);
 
-  const deleteBlock = (id: string) => {
-    const newBlocks = blocks.filter((block) => block.id !== id);
-    setBlocks(newBlocks);
-  };
-
   if (loading) return <div>Loading...</div>;
   if (!user) return <NotLoggedIn />;
   if (!id) return <div>Blog was not found</div>;
@@ -94,9 +89,9 @@ function EditBlog() {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="grid w-full grid-cols-[30%_70%] calc-h-vw-1">
+    <div className="calc-h-vw-2 grid w-full grid-cols-[40%_60%] sm:grid-cols-[35%_65%]">
       <div className="flex justify-start">
-        <form className="flex-col gap-8 df">
+        <form className="w-11/12 flex-col gap-8 df">
           {/* title */}
           <AutoResizeTextArea
             label="title"
@@ -121,9 +116,15 @@ function EditBlog() {
           />
 
           {/* is_published */}
-          <div className="gap-2 df">
-            <div className="gap-4 df">
-              <label htmlFor="is-published">Publish</label>
+          <div className="grid w-full grid-cols-[40%_40%_20%]">
+            <div className="">
+              <label htmlFor="is-published" className="font-bold">
+                Publish
+              </label>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {isPublished ? 'Yes' : 'No'}
               <input
                 type="checkbox"
                 id="is-published"
@@ -131,7 +132,6 @@ function EditBlog() {
                 onChange={(e) => setIsPublished(e.target.checked)}
               />
             </div>
-            <div>{isPublished ? 'Yes' : 'No'}</div>
           </div>
 
           <AddContentBlockButton
@@ -155,8 +155,8 @@ function EditBlog() {
         </form>
       </div>
 
-      <div className="overflow-auto">
-        <h2 className="h2">Blog preview</h2>
+      <div className="-mr-4 overflow-auto pr-4">
+        <h2 className="mb-4 h2">Blog preview</h2>
 
         <Reorder.Group
           className="cursor-grab active:cursor-grabbing"
@@ -164,9 +164,9 @@ function EditBlog() {
           onReorder={setBlocks}
         >
           <ContentRenderer
-            content={blocks}
+            blocks={blocks}
+            setBlocks={setBlocks}
             isCreationMode={true}
-            onDeleteBlock={deleteBlock}
           />
         </Reorder.Group>
       </div>
