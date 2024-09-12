@@ -70,74 +70,76 @@ function Login() {
   };
 
   return (
-    <div className="flex-col rounded-xl border px-10 pb-12 pt-6 df">
-      <h2 className="mb-6 h2">Login</h2>
+    <div className="df calc-h-vw-1">
+      <div className="flex-col rounded-xl border px-10 pb-12 pt-6 df">
+        <h2 className="mb-6 h2">Login</h2>
 
-      <form onSubmit={onSubmit} className="flex-col gap-8 df clamp-sm">
-        {/* Name or pw are wrong */}
-        {errors.message && (
-          <div
-            className={`flex gap-4 rounded bg-red-500 px-5 py-2 text-white transition-opacity duration-300
-            ease-in-out clamp-sm
-            ${showErrors.message ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'}`}
+        <form onSubmit={onSubmit} className="flex-col gap-8 df clamp-sm">
+          {/* Name or pw are wrong */}
+          {errors.message && (
+            <div
+              className={`flex gap-4 rounded bg-red-500 px-5 py-2 text-white transition-opacity duration-300
+              ease-in-out clamp-sm
+              ${showErrors.message ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'}`}
+            >
+              <img src="alert.svg" alt="alert icon" className="w-8" />
+              <p>{errors.message}</p>
+            </div>
+          )}
+
+          {/* Name */}
+          <LoginInput
+            value={name}
+            placeholder="Name"
+            imgPath="user"
+            setValue={setName}
+            errors={errors}
+          />
+
+          {errors.name && (
+            <div
+              className={`ml-12 mt-[-20px] text-left text-sm text-red-500 transition-all duration-300 ease-in-out
+              clamp-sm ${showErrors.name ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'}`}
+            >
+              {errors.name}
+            </div>
+          )}
+
+          {/* Password */}
+          <LoginInput
+            value={password}
+            placeholder="Password"
+            imgPath="lock"
+            type="password"
+            setValue={setPassword}
+            errors={errors}
+          />
+
+          {errors.password && (
+            <div
+              className={`ml-12 mt-[-20px] text-left text-sm text-red-500 transition-all duration-300 ease-in-out
+              clamp-sm ${showErrors.password ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'}`}
+            >
+              {errors.password}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            className="rounded-3xl border bg-white px-5 py-3 font-bold text-black transition-colors
+              duration-150 clamp-sm hover:bg-gray-100 active:bg-gray-200"
           >
-            <img src="alert.svg" alt="alert icon" className="w-8" />
-            <p>{errors.message}</p>
+            Login
+          </button>
+
+          <div className="gap-1 df">
+            Don&apos;t have an account?
+            <span className="font-bold hover:underline">
+              <Link to="/register">Register</Link>
+            </span>
           </div>
-        )}
-
-        {/* Name */}
-        <LoginInput
-          value={name}
-          placeholder="Name"
-          imgPath="user"
-          setValue={setName}
-          errors={errors}
-        />
-
-        {errors.name && (
-          <div
-            className={`ml-12 mt-[-20px] text-left text-sm text-red-500 transition-all duration-300 ease-in-out
-            clamp-sm ${showErrors.name ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'}`}
-          >
-            {errors.name}
-          </div>
-        )}
-
-        {/* Password */}
-        <LoginInput
-          value={password}
-          placeholder="Password"
-          imgPath="lock"
-          type="password"
-          setValue={setPassword}
-          errors={errors}
-        />
-
-        {errors.password && (
-          <div
-            className={`ml-12 mt-[-20px] text-left text-sm text-red-500 transition-all duration-300 ease-in-out
-            clamp-sm ${showErrors.password ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'}`}
-          >
-            {errors.password}
-          </div>
-        )}
-
-        <button
-          type="submit"
-          className="rounded-3xl border bg-white px-5 py-3 font-bold text-black transition-colors
-            duration-150 clamp-sm hover:bg-gray-100 active:bg-gray-200"
-        >
-          Login
-        </button>
-
-        <div className="gap-1 df">
-          Don&apos;t have an account?
-          <span className="font-bold hover:underline">
-            <Link to="/register">Register</Link>
-          </span>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 }
