@@ -1,4 +1,5 @@
 import { API_URL } from '../../App';
+import { User } from './Blog';
 
 export interface BlogItem {
   id: string;
@@ -8,6 +9,7 @@ export interface BlogItem {
   content: string;
   posted_on: Date;
   updated_at: Date;
+  users: User[];
 }
 
 export interface BlogResponse {
