@@ -246,6 +246,7 @@ async function main() {
           create: [
             {
               text: 'I agree! The ethical considerations of AI are crucial to discuss.',
+              repliedToName: 'Frank',
               user: { connect: { id: users[7].id } },
               blog: { connect: { id: blogs[0].id } },
             },
