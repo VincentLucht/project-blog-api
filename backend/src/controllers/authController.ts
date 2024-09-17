@@ -19,6 +19,7 @@ type User = {
 
 export interface AuthenticatedRequest extends Request {
   user?: User;
+  title?: string;
 }
 
 class AuthController {
