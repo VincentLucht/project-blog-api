@@ -75,6 +75,7 @@ model Comments {
   blogId    String
   text      String   @db.VarChar(500)
   posted_on DateTime @default(now())
+  repliedToName String?
 
   // self-referential relationship for replying to comments
   parent_comment    Comments?  @relation("CommentReplies", fields: [parent_comment_id], references: [id], onDelete: Cascade)
