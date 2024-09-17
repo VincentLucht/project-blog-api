@@ -19,6 +19,11 @@ export async function updateBlog(updatedBlogItem: CompleteBlogItem, token: strin
     throw new Error('User not authenticated');
   }
 
+  if (content.length === 0) {
+    toast.error('Do you really want to publish an empty Blog?', { autoClose: 10000 });
+    throw new Error();
+  }
+
   const response = await fetch(`${API_URL}/blogs/${id}`, {
     method: 'PUT',
     headers: {
