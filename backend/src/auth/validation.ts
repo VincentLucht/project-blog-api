@@ -35,7 +35,6 @@ class Validator {
     ];
   }
 
-  // TODO add rules for summary
   blogRules() {
     return [
       body('title')
@@ -56,12 +55,35 @@ class Validator {
 
       body('content')
         .trim()
-        .custom((array) => {
+        .custom((rawArray) => {
+          const array = JSON.parse(rawArray);
           if (!Array.isArray(array)) {
-            throw new Error('Are you sure you want to publish an empty array?');
+            throw new Error('Are you sure you want to publish an empty Blog?');
           }
           return true;
         }),
+    ];
+  }
+
+  addCommentRules() {
+    return [
+      body('text').trim()
+        .notEmpty()
+        .withMessage('Your comment should not be empty'),
+    ];
+  }
+
+  replyToCommentRules() {
+    return [
+      body('text').trim()
+        .notEmpty()
+        .withMessage('Your reply should at least be 1 character long'),
+      body('parent_comment_id').trim()
+        .notEmpty()
+        .withMessage('Replying to a comment requires the id of the parent id'),
+      body('replied_to_name').trim()
+        .notEmpty()
+        .withMessage('You need to specify the name of the commenter you reply to'),
     ];
   }
 }
