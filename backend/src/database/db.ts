@@ -1,4 +1,5 @@
-import { PrismaClient, Roles, ContentTypes, ContentBlock } from '@prisma/client';
+import { PrismaClient, Roles, ContentBlock } from '@prisma/client';
+import { randomUUID } from 'crypto';
 const prisma = new PrismaClient();
 
 class DB {
@@ -12,18 +13,20 @@ class DB {
     });
   }
 
-  async createBlog(
-    userId: string,
-    title: string,
-    summary: string,
-    is_published: boolean,
-    contentBlocks: { type: ContentTypes; content: string; order: number }[],
-  ) {
+  async createBlog(userId: string) {
     const blog = await prisma.blog.create({
       data: {
-        title,
-        summary,
-        is_published,
+        title: 'Untitled',
+        summary: '',
+        content: {
+          create: {
+            content: 'Just created this Blog!',
+            type: 'text',
+            id: randomUUID(),
+            order: 0,
+          },
+        },
+        is_published: false,
         users: {
           create: {
             user: {
@@ -31,12 +34,24 @@ class DB {
             },
           },
         },
-        content: {
-          create: contentBlocks,
+      },
+    });
+
+    return blog;
+  }
+
+  async searchBlog(title: string) {
+    const blogs = await prisma.blog.findMany({
+      where: {
+        is_published: true,
+        title: {
+          contains: title,
+          mode: 'insensitive',
         },
       },
     });
-    return blog;
+
+    return blogs;
   }
 
   async updateBlog(
@@ -67,6 +82,14 @@ class DB {
     });
   }
 
+  async deleteBlog(id: string) {
+    await prisma.blog.delete({
+      where: {
+        id,
+      },
+    });
+  }
+
   async getAllUsers() {
     const allUsers = await prisma.user.findMany();
     return allUsers;
@@ -87,12 +110,8 @@ class DB {
       where: {
         is_published: true,
       },
-      include: {
-        content: {
-          orderBy: {
-            order: 'asc',
-          },
-        },
+      orderBy: {
+        updated_at: 'desc',
       },
     });
     return allBlogs;
@@ -124,6 +143,9 @@ class DB {
           },
         },
       },
+      orderBy: {
+        updated_at: 'desc',
+      },
     });
     return allBlogs;
   }
@@ -138,14 +160,19 @@ class DB {
           include: {
             blog: true,
           },
+          orderBy: {
+            blog: {
+              updated_at: 'desc',
+            },
+          },
         },
       },
     });
     return blogsFromUser;
   }
 
-  async getBlogWithComments(blogId: string) {
-    const blogWithComments = await prisma.blog.findUnique({
+  async getBlog(blogId: string) {
+    const blog = await prisma.blog.findUnique({
       where: {
         id: blogId,
       },
@@ -155,25 +182,40 @@ class DB {
             order: 'asc',
           },
         },
-        comments: {
+      },
+    });
+    return blog;
+  }
+
+  async getBlogComments(blogId: string) {
+    console.log('Ran');
+    const blogComments = await prisma.comments.findMany({
+      where: {
+        blogId,
+      },
+      orderBy: {
+        posted_on: 'desc',
+      },
+      include: {
+        user: {
+          select: { id: true, name: true },
+        },
+        replies: {
           include: {
-            user: {
-              select: { id: true, name: true },
-            },
-            replies: {
-              include: {
-                user: { select: { id: true, name: true } },
-              },
-            },
+            user: { select: { id: true, name: true } },
+          },
+          orderBy: {
+            posted_on: 'asc',
           },
         },
       },
     });
-    return blogWithComments;
+
+    return blogComments;
   }
 
   async isInBlogAuthors(authorId: string, blogId: string) {
-    const test = await prisma.userBlogs.findUnique({
+    const result = await prisma.userBlogs.findUnique({
       where: {
         blog_id_user_id: {
           blog_id: blogId,
@@ -182,7 +224,41 @@ class DB {
       },
     });
 
-    return test;
+    if (result) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  async addComment(userId: string, blogId: string, text: string) {
+    await prisma.comments.create({
+      data: {
+        userId,
+        blogId,
+        text,
+      },
+    });
+  }
+
+  async replyToComment(blogId: string, text: string, parent_comment_id: string, userId: string, repliedToName: string) {
+    await prisma.comments.create({
+      data: {
+        blogId,
+        text,
+        parent_comment_id,
+        repliedToName,
+        userId,
+      },
+    });
+  }
+
+  async getComment(commentId: string) {
+    await prisma.comments.findUnique({
+      where: {
+        id: commentId,
+      },
+    });
   }
 }
 
