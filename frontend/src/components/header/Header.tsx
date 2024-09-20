@@ -15,10 +15,7 @@ function Header() {
   const isActive = (path: string) => {
     // check if the path is a blog id or another route
     if (path === '/') {
-      return (
-        location.pathname === '/' ||
-        !NAV_ITEMS.some((item) => item.path === `/${location.pathname.split('/')[1]}`)
-      );
+      return location.pathname === '/';
     }
     return location.pathname.startsWith(path);
   };
@@ -32,6 +29,7 @@ function Header() {
       <nav className="gap-4 df">
         {NAV_ITEMS.map(({ path, label, authRequired }) => {
           if (authRequired && !isLoggedIn) return null;
+
           return (
             <Link
               key={path}
@@ -43,7 +41,11 @@ function Header() {
           );
         })}
         {!isLoggedIn && (
-          <Link to="/login" className="nav-button">
+          <Link
+            to="/login"
+            className={`nav-button
+            ${location.pathname === '/login' || location.pathname === '/sign-up' ? 'active' : ''}`}
+          >
             Sign In
           </Link>
         )}
