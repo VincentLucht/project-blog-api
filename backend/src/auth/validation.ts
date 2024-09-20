@@ -16,6 +16,14 @@ class Validator {
         .isLength({ max: 255 })
         .withMessage('Password must not be longer than 255 characters.'),
 
+      body('confirm_password').trim()
+        .custom((value, { req }) => {
+          if (value !== req.body.password) {
+            throw new Error('Confirm password must match the password.');
+          }
+          return true;
+        }),
+
       body('role').trim()
         .notEmpty()
         .withMessage('Role is required')
@@ -29,6 +37,7 @@ class Validator {
       body('name').trim()
         .notEmpty()
         .withMessage('Name is required'),
+
       body('password').trim()
         .notEmpty()
         .withMessage('Password is required'),
@@ -78,9 +87,11 @@ class Validator {
       body('text').trim()
         .notEmpty()
         .withMessage('Your reply should at least be 1 character long'),
+
       body('parent_comment_id').trim()
         .notEmpty()
         .withMessage('Replying to a comment requires the id of the parent id'),
+
       body('replied_to_name').trim()
         .notEmpty()
         .withMessage('You need to specify the name of the commenter you reply to'),
