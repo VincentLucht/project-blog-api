@@ -102,6 +102,7 @@ class BlogController {
     const { user } = req;
 
     if (!user) return res.status(401).json({ message: 'Unauthorized' });
+    if (user.role !== 'AUTHOR') return res.status(401).json({ message: 'You are not allowed to create a Blog.' });
     if (checkValidationError(req, res)) return;
 
     const userId = user.id;
