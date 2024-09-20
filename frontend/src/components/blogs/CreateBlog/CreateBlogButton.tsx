@@ -18,12 +18,15 @@ function CreateBlogButton() {
         navigate(`/hub/${blog.blog.id}`);
         toast.success('Successfully created a new Blog');
       })
-      .catch(() => toast.error('There was an error while creating a new Blog'));
+      .catch((e: { message: string | undefined }) => {
+        if (e.message) toast.error(`${e.message}`);
+        else toast.error('There was an error while creating a new Blog');
+      });
   };
 
   return (
     <button
-      className="prm-button h-5/6 text-sm sm:h-full sm:text-base"
+      className="h-5/6 text-sm prm-button sm:h-full sm:text-base"
       onClick={onClick}
     >
       Create new Blog
