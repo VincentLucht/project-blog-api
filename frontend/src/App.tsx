@@ -8,6 +8,7 @@ import Header from './components/header/Header';
 import Blogs from './components/blogs/Blogs';
 import { BlogDetail } from './components/blogs/BlogDetail/BlogDetail';
 
+import SignUp from './components/auth/user/SignUp';
 import Login from './components/header/login/Login';
 import Account from './components/account/Account';
 
@@ -22,7 +23,7 @@ export default function App() {
   return (
     <AuthContextProvider>
       <div className="flex min-h-screen flex-col">
-        <header className="bottom-border-shadow fixed z-50 w-full bg-blue-600 p-4">
+        <header className="fixed z-50 w-full bg-blue-600 p-4 bottom-border-shadow">
           <Header />
         </header>
 
@@ -33,6 +34,7 @@ export default function App() {
               <Route path="/hub" element={<BlogHub />} />
               <Route path="/hub/:id" element={<EditBlog />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/sign-up" element={<SignUp />} />
               <Route path="/account" element={<Account />} />
               <Route path="/:id" element={<BlogDetail />} />
               <Route path="*" element={<NotFound />} />
