@@ -38,8 +38,8 @@ function Login() {
 
     try {
       // Handle successful login here
-      const token = await handleLogin(name, password);
-      login(token.token);
+      const response = await handleLogin(name, password);
+      login(response.token);
       toast.success('Login successful!');
       navigate('/');
     } catch (error) {
@@ -83,7 +83,7 @@ function Login() {
               ${showErrors.message ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'}`}
             >
               <img src="alert.svg" alt="alert icon" className="w-8" />
-              <p>{errors.message}</p>
+              <p className="text-left">{errors.message}</p>
             </div>
           )}
 
@@ -135,7 +135,7 @@ function Login() {
           <div className="gap-1 df">
             Don&apos;t have an account?
             <span className="font-bold hover:underline">
-              <Link to="/register">Register</Link>
+              <Link to="/sign-up">Sign Up</Link>
             </span>
           </div>
         </form>
