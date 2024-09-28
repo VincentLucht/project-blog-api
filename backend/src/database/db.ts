@@ -1,4 +1,4 @@
-import { PrismaClient, Roles, ContentBlock } from '@prisma/client';
+import { PrismaClient, Roles, ContentBlock, BlogTags } from '@prisma/client';
 import { randomUUID } from 'crypto';
 const prisma = new PrismaClient();
 
@@ -21,7 +21,6 @@ class DB {
         content: {
           create: {
             content: 'Just created this Blog!',
-            type: 'text',
             id: randomUUID(),
             order: 0,
           },
@@ -59,6 +58,7 @@ class DB {
     title: string,
     summary: string,
     is_published: boolean,
+    tags: BlogTags[],
     updated_at: string,
     content: ContentBlock[],
   ) {
@@ -69,11 +69,11 @@ class DB {
         summary,
         is_published,
         updated_at,
+        tags,
         content: {
           deleteMany: {},
-          create: content.map(({ id, type, content, order }) => ({
+          create: content.map(({ id, content, order }) => ({
             id,
-            type,
             content,
             order,
           })),
@@ -127,11 +127,8 @@ class DB {
         title: true,
         summary: true,
         posted_on: true,
-        content: {
-          orderBy: {
-            order: 'asc',
-          },
-        },
+        updated_at: true,
+        tags: true,
         users: {
           select: {
             user: {
@@ -152,13 +149,19 @@ class DB {
 
   async getAllBlogsFromUser(id: string) {
     const blogsFromUser = await prisma.user.findUnique({
-      where: {
-        id,
-      },
+      where: { id },
       select: {
         blogs: {
-          include: {
-            blog: true,
+          select: {
+            blog: {
+              select: {
+                id: true,
+                title: true,
+                summary: true,
+                updated_at: true,
+                tags: true,
+              },
+            },
           },
           orderBy: {
             blog: {
@@ -168,7 +171,9 @@ class DB {
         },
       },
     });
-    return blogsFromUser;
+
+    const flattenedBlogs = blogsFromUser?.blogs.map(({ blog }) => blog) ?? [];
+    return flattenedBlogs;
   }
 
   async getBlog(blogId: string) {
@@ -188,7 +193,6 @@ class DB {
   }
 
   async getBlogComments(blogId: string) {
-    console.log('Ran');
     const blogComments = await prisma.comments.findMany({
       where: {
         blogId,
