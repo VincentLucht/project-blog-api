@@ -83,7 +83,7 @@ class BlogController {
   getAllBlogsFromUser = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.params.id;
     const allBlogs = await db.getAllBlogsFromUser(userId);
-    return res.json({ data: allBlogs });
+    return res.json({ allBlogs });
   });
 
   getBlog = asyncHandler(async (req: Request, res: Response) => {
@@ -125,8 +125,8 @@ class BlogController {
     if (user.role !== 'AUTHOR') return res.status(403).json({ error: 'Access denied, you are not an author' });
 
     // update the blog
-    const { title, summary, is_published, updated_at, content } = req.body;
-    await db.updateBlog(blogId, title, summary, JSON.parse(is_published), updated_at, JSON.parse(content));
+    const { title, summary, is_published, tags, updated_at, content } = req.body;
+    await db.updateBlog(blogId, title, summary, JSON.parse(is_published), tags, updated_at, JSON.parse(content));
 
     return res.json({ message: 'Blog update successful' });
   });
