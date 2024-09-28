@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react';
-import { fetchBlogs, BlogItem } from './fetchBlogs';
-import { searchBlogs } from './searchBlogs';
+import { fetchBlogs, BlogItem } from './util/fetchBlogs';
+
 import { Blog } from './Blog';
+import SearchBar from './SearchBar';
+import { SortOptions } from './SortOptions';
+import FilterOptions from './FilterOptions';
+
 import ConnectionError from '../partials/ConnectionError';
+import Loading from '../partials/Loading';
+import NoMessageFound from '../partials/noMessageFound';
 
 function Blogs() {
-  const [search, setSearch] = useState('');
   const [data, setData] = useState<BlogItem[]>([]);
   const [originalData, setOriginalData] = useState<BlogItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -24,54 +29,39 @@ function Blogs() {
       });
   }, []);
 
-  const searchBlog = () => {
-    if (search === '') {
-      // If search is empty, reset to original data
+  const onSearchResult = (results: BlogItem[]) => {
+    if (results.length === 0) {
       setData(originalData);
-      return;
+    } else {
+      setData(results);
     }
-
-    searchBlogs(search)
-      .then((response) => {
-        setData(response.foundBlogs);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
   };
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    searchBlog();
-  };
-
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <Loading />;
   if (error === 'Load failed') return <ConnectionError />;
   if (error) return <div>Error: {error}</div>;
 
   return (
     <>
-      <form className="relative mb-4" onSubmit={onSubmit}>
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full rounded-3xl px-4 py-3 shadow-md transition-shadow hover:shadow-md
-            focus:outline-none focus:ring-2 focus:ring-blue-300"
-          type="text"
-          placeholder="Search Blog"
-          aria-label="Search Blog"
-        />
-        <button
-          className="absolute right-0 top-0 h-full transform rounded-r-3xl bg-blue-600 px-4 font-bold
-            text-white transition-all duration-300 ease-in-out hover:bg-blue-700 active:scale-95
-            active:bg-blue-800"
-          type="submit"
-        >
-          Search
-        </button>
-      </form>
+      <div className="mb-4 gap-5 df">
+        <SearchBar onSearchResult={onSearchResult} />
 
-      <div className="grid grid-cols-1 gap-16 pb-8 pt-4 lg:grid-cols-2">
+        <SortOptions blogs={data} setBlogs={setData} />
+      </div>
+
+      <FilterOptions setBlogs={setData} originalData={originalData} />
+
+      <div
+        className={`${data.length !== 0 ? 'grid auto-rows-auto grid-cols-1 items-start gap-16 lg:grid-cols-2' : ''}
+          pb-8 pt-4`}
+      >
+        {data.length === 0 && (
+          <NoMessageFound
+            message="No Blogs founds found here..."
+            secondMessage="Are you sure you typed the correct name?"
+          />
+        )}
+
         {data.map((blog) => (
           <Blog
             key={blog.id}
@@ -79,6 +69,8 @@ function Blogs() {
             title={blog.title}
             summary={blog.summary}
             posted_on={blog.posted_on}
+            tags={blog.tags}
+            users={blog.users}
           />
         ))}
       </div>
