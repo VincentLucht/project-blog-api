@@ -1,27 +1,19 @@
-import { Content } from './BlogDetail';
 import { Reorder } from 'framer-motion';
+import parse from 'html-react-parser';
 import { toast } from 'react-toastify';
+import { Content } from './BlogDetail';
 
-import Prism from 'prismjs';
-import { useEffect } from 'react';
-import '../../../css/prism.css';
-import 'prismjs/themes/prism-twilight.css';
-
-interface ContentRendererInterface {
+interface ContentRendererProps {
   blocks: Content[];
   setBlocks?: (newContent: Content[]) => void;
   isCreationMode?: boolean;
 }
 
-function ContentRenderer({
+export default function ContentRenderer({
   blocks,
   setBlocks,
-  isCreationMode,
-}: ContentRendererInterface) {
-  useEffect(() => {
-    Prism.highlightAll();
-  }, [blocks]);
-
+  isCreationMode = false,
+}: ContentRendererProps) {
   const deleteBlock = (id: string) => {
     if (!setBlocks) return;
     const newBlocks = blocks.filter((block) => block.id !== id);
@@ -29,15 +21,15 @@ function ContentRenderer({
   };
 
   const copyBlock = (content: string) => {
-    const copiedContent = content;
-
+    const blob = new Blob([content], { type: 'text/html' });
+    const richTextData = [new ClipboardItem({ 'text/html': blob })];
     navigator.clipboard
-      .writeText(copiedContent)
+      .write(richTextData)
       .then(() => {
-        toast.info('Text copied to clipboard', { autoClose: 2500 });
+        toast.info('Formatted text copied to clipboard', { autoClose: 2500 });
       })
       .catch(() => {
-        toast.error('Could not copy text');
+        toast.error('Could not copy formatted text');
       });
   };
 
@@ -46,36 +38,14 @@ function ContentRenderer({
 
     const contentElement = (
       <div className="grid grid-cols-[80%_20%] gap-2 sm:grid-cols-[85%_15%] lg:grid-cols-[87%_13%]">
-        <div>
-          {contentItem.type === 'large header' && (
-            <h1 className="text-left text-5xl font-black">{contentItem.content}</h1>
-          )}
-
-          {contentItem.type === 'header' && (
-            <h2 className="text-left h2">{contentItem.content}</h2>
-          )}
-
-          {contentItem.type === 'small header' && (
-            <h1 className="text-left text-2xl font-bold">{contentItem.content}</h1>
-          )}
-
-          {contentItem.type === 'text' && (
-            <div className="whitespace-pre-wrap text-left">{contentItem.content}</div>
-          )}
-
-          {contentItem.type === 'image' && (
-            <img src={`${contentItem.content}`} alt={`${contentItem.content}`} />
-          )}
-
-          {contentItem.type === 'line break' && <br />}
-
-          {contentItem.type === 'code block' && (
-            <pre className="flex justify-start">
-              <code className="language-javascript">{contentItem.content}</code>
-            </pre>
-          )}
+        {/* rendered content */}
+        <div
+          className={`${contentItem.content === '<p></p>' ? 'mb-5' : 'mb-2'} text-left`}
+        >
+          {parse(contentItem.content)}
         </div>
 
+        {/* Copy, Order, and Delete */}
         {isCreationMode && (
           <div className="flex content-center justify-between">
             <button onClick={() => copyBlock(contentItem.content)}>
@@ -107,5 +77,3 @@ function ContentRenderer({
 
   return <div>{renderedContent}</div>;
 }
-
-export default ContentRenderer;
