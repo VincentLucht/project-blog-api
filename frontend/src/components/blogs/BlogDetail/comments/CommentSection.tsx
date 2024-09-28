@@ -62,8 +62,6 @@ function Comments() {
       );
   };
 
-  console.log(comments);
-
   return (
     <div>
       <h2 className="mb-3 mt-12 text-left h2">Comments:</h2>
