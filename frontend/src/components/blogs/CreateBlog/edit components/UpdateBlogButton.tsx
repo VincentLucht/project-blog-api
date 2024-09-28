@@ -1,5 +1,6 @@
 import { toast } from 'react-toastify';
-import { updateBlog } from '../updateBlog';
+import { updateBlog } from '../util/updateBlog';
+import { BlogTags } from '../../BlogDetail/BlogDetail';
 
 import { CompleteBlogItem } from '../../BlogDetail/BlogDetail';
 import { Content } from '../../BlogDetail/BlogDetail';
@@ -9,6 +10,7 @@ interface UpdateBlogButtonProps {
   title: string;
   summary: string;
   isPublished: boolean | undefined;
+  tags: BlogTags[];
   blocks: Content[];
   token: string;
 }
@@ -18,6 +20,7 @@ function UpdateBlogButton({
   title,
   summary,
   isPublished,
+  tags,
   blocks,
   token,
 }: UpdateBlogButtonProps) {
@@ -30,9 +33,11 @@ function UpdateBlogButton({
           title,
           summary,
           is_published: isPublished,
+          tags,
           updated_at: new Date(Date.now()).toISOString(),
           content: blocks,
         };
+
         updateBlog(updatedBlogItem, token)
           .then(() => {
             toast.success('Successfully updated the blog');
@@ -41,7 +46,7 @@ function UpdateBlogButton({
             toast.error('An error occurred while updating the blog');
           });
       }}
-      className="prm-button h-12 w-full"
+      className="h-12 w-full prm-button"
     >
       Update Blog
     </button>
