@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import dayjs from 'dayjs';
+import { BlogTags } from './BlogDetail/BlogDetail';
+import convertTag from './util/convertTag';
 
 export interface User {
   user: {
@@ -15,6 +17,7 @@ export interface BlogInterface {
   posted_on: Date;
   readMore?: boolean;
   editMode?: boolean;
+  tags?: BlogTags[];
   users?: User[];
 }
 
@@ -25,6 +28,7 @@ export function Blog({
   posted_on,
   readMore = true,
   editMode = false,
+  tags,
   users,
 }: BlogInterface) {
   return (
@@ -41,7 +45,7 @@ export function Blog({
       </div>
 
       <div className="pl-1">
-        <div className="mb-[10px] flex items-baseline gap-1">
+        <div className="flex items-baseline gap-1">
           {users?.map((user, index) => (
             <div className="text-base leading-none" key={index}>
               <span>{user.user.name}</span>
@@ -53,11 +57,22 @@ export function Blog({
           </span>
         </div>
 
+        {/* tags */}
+        <div className="mb-5 mt-3 flex cursor-default flex-wrap gap-3">
+          {tags?.map((tag, index) => (
+            <div
+              className="rounded-md border border-gray-300 px-2 py-1 transition-colors duration-200"
+              key={index}
+            >
+              {convertTag(tag)}
+            </div>
+          ))}
+        </div>
+
         <div className="text-gray-300">{summary}</div>
 
         {readMore && (
           <div className="mt-4">
-            {/* TODO: Add link to blog too */}
             <Link to={`/${id}`} className="text-blue-400 underline underline-offset-2">
               Read more
             </Link>
