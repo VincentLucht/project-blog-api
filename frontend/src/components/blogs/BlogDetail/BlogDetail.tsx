@@ -1,56 +1,66 @@
 import { useEffect, useState } from 'react';
-import { fetchSingularBlog } from './fetchSingularBlog';
 import { useParams } from 'react-router-dom';
+
 import ContentRenderer from './ContentRenderer';
+import Comments from './comments/CommentSection';
 import NotFound from '../../partials/NotFound';
+import Loading from '../../partials/Loading';
+
+import { fetchSingularBlog } from './fetchSingularBlog';
 
 interface User {
   id: string;
   name: string;
 }
 
-interface Comment {
+enum BlogTags {
+  JavaScript = 'JavaScript',
+  TypeScript = 'TypeScript',
+  React = 'React',
+  NodeJS = 'NodeJS',
+  HTML = 'HTML',
+  CSS = 'CSS',
+  WebDevelopment = 'WebDevelopment',
+  Frontend = 'Frontend',
+  Backend = 'Backend',
+  FullStack = 'FullStack',
+}
+
+export interface Comment {
   blogId: string;
   id: string;
   parent_comment_id: string;
   posted_on: string;
+  repliedToName?: string;
   replies: Comment[];
   text: string;
   user: User;
   userId: string;
 }
 
-export type ContentTypes =
-  | 'large header'
-  | 'header'
-  | 'small header'
-  | 'text'
-  | 'image'
-  | 'line break'
-  | 'code block';
-
 export interface Content {
   blogId: string;
   content: string;
   id: string;
   order: number;
-  type: ContentTypes;
 }
 
 export interface CompleteBlogItem {
   id: string;
-  is_published?: boolean;
-  posted_on?: string;
-  summary: string;
   title: string;
-  updated_at?: string;
-  comments?: Comment[];
+  summary: string;
+  is_published?: boolean;
   content: Content[];
+  posted_on?: string;
+  updated_at?: string;
+  tags: BlogTags[];
+  // comments?: Comment[]; // ? separated comments separate function
 }
 
 export function BlogDetail() {
   const { id } = useParams();
   const [blog, setBlog] = useState<CompleteBlogItem | null>(null);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -58,9 +68,8 @@ export function BlogDetail() {
     function loadBlog() {
       fetchSingularBlog(id)
         .then((fetchedBlog) => {
-          console.log(fetchedBlog.data); // ! TODO remove this
-          setBlog(fetchedBlog.data);
           setLoading(false);
+          setBlog(fetchedBlog.data);
         })
         .catch((error) => {
           setError(`Failed to load blog: ${error}`);
@@ -71,14 +80,19 @@ export function BlogDetail() {
     loadBlog();
   }, [id]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <Loading />;
   if (error) return <div>Error: {error}</div>;
   if (!blog) return <NotFound />;
 
   return (
     <div>
       <h1 className="mb-4 text-left text-5xl font-extrabold underline">{blog.title}</h1>
-      <ContentRenderer content={blog.content} />
+
+      <ContentRenderer blocks={blog.content} />
+
+      <Comments />
     </div>
   );
 }
+
+export { BlogTags };
