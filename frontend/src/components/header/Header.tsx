@@ -21,10 +21,12 @@ function Header() {
     };
 
     if (path === '/') {
-      // Check if the path is the root path, but not '/login'
+      // Check if the path is the root path, but not '/login' or '/sign-up'
       return (
         location.pathname === '/' ||
-        (isBlogPostPath(location.pathname) && location.pathname !== '/login')
+        (isBlogPostPath(location.pathname) &&
+          location.pathname !== '/login' &&
+          location.pathname !== '/sign-up')
       );
     }
     return location.pathname.startsWith(path);
