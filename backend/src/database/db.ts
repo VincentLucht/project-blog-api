@@ -176,12 +176,21 @@ class DB {
     return flattenedBlogs;
   }
 
-  async getBlog(blogId: string) {
+  async getBlogWithUser(blogId: string) {
     const blog = await prisma.blog.findUnique({
       where: {
         id: blogId,
       },
       include: {
+        users: {
+          select: {
+            user: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
         content: {
           orderBy: {
             order: 'asc',
@@ -189,6 +198,7 @@ class DB {
         },
       },
     });
+
     return blog;
   }
 
