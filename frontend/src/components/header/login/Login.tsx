@@ -78,8 +78,8 @@ function Login() {
           {/* Name or pw are wrong */}
           {errors.message && (
             <div
-              className={`flex gap-4 rounded bg-red-500 px-5 py-2 text-white transition-opacity duration-300
-              ease-in-out clamp-sm
+              className={`flex items-center gap-4 rounded bg-red-500 px-5 py-2 text-white transition-opacity
+              duration-300 ease-in-out clamp-sm
               ${showErrors.message ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'}`}
             >
               <img src="alert.svg" alt="alert icon" className="w-8" />
