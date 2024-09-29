@@ -6,7 +6,7 @@ interface LoginInputProps {
   type?: string;
   imgPath: string;
   setValue: Dispatch<SetStateAction<string>>;
-  errors: { name?: string };
+  errors: { name?: string | undefined };
 }
 
 export function LoginInput({
