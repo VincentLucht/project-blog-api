@@ -5,15 +5,17 @@ import { BlogItem } from './util/fetchBlogs';
 import { BlogData } from './CreateBlog/BlogHub';
 
 interface SearchBarProps {
-  onSearchResult?: (results: BlogItem[]) => void;
   mode?: 'normal' | 'user';
+  setBlogs?: React.Dispatch<React.SetStateAction<BlogItem[]>>;
+  originalBlogs?: BlogItem[];
   setUserBlogs?: React.Dispatch<React.SetStateAction<BlogData[]>>;
   originalUserBlogs?: BlogData[];
 }
 
 function SearchBar({
-  onSearchResult,
   mode = 'normal',
+  setBlogs,
+  originalBlogs,
   setUserBlogs,
   originalUserBlogs,
 }: SearchBarProps) {
@@ -22,11 +24,11 @@ function SearchBar({
 
   useEffect(() => {
     const searchBlog = () => {
-      if (mode === 'normal' && onSearchResult) {
+      if (mode === 'normal' && setBlogs && originalBlogs) {
         if (search === '') {
           // Only reset if the search term has actually changed to empty
           if (lastSearchTerm !== '') {
-            onSearchResult([]);
+            setBlogs(originalBlogs);
             setLastSearchTerm('');
           }
           return;
@@ -34,7 +36,7 @@ function SearchBar({
 
         searchBlogs(search)
           .then((response) => {
-            onSearchResult(response.foundBlogs);
+            setBlogs(response.foundBlogs);
             setLastSearchTerm(search);
           })
           .catch((e: { message: string | undefined }) => {
@@ -63,7 +65,15 @@ function SearchBar({
     }, 300);
 
     return () => clearTimeout(debounceTimer);
-  }, [search, lastSearchTerm, mode, onSearchResult, setUserBlogs, originalUserBlogs]);
+  }, [
+    search,
+    lastSearchTerm,
+    mode,
+    setBlogs,
+    originalBlogs,
+    setUserBlogs,
+    originalUserBlogs,
+  ]);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
