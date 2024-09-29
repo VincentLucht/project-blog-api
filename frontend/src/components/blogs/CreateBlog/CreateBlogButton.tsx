@@ -1,6 +1,6 @@
 import { useGetToken } from '../../account/useGetToken';
 import { useNavigate } from 'react-router-dom';
-import { createBlog } from './createBlog';
+import { createBlog } from './util/createBlog';
 import { toast } from 'react-toastify';
 
 function CreateBlogButton() {

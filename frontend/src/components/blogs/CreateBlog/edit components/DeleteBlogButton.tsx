@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { deleteBlog } from '../deleteBlog';
+import { deleteBlog } from '../util/deleteBlog';
 import { toast } from 'react-toastify';
 
 interface DeleteBlockButtonProps {
@@ -35,7 +35,7 @@ function DeleteBlockButton({ blogId, token }: DeleteBlockButtonProps) {
 
   return (
     <button
-      className="prm-button-red mt-6 h-12 w-full"
+      className="mb-8 mt-6 h-12 w-full prm-button-red"
       onClick={(e) => handleDelete(e)}
     >
       Delete Blog
