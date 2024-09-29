@@ -70,7 +70,7 @@ function Login() {
   };
 
   return (
-    <div className="df calc-h-vw-1">
+    <div className="pb-14 df calc-h-vw-2">
       <div className="flex-col rounded-xl border px-10 pb-12 pt-6 df">
         <h2 className="mb-6 h2">Login</h2>
 
