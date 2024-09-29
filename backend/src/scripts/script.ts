@@ -1,5 +1,7 @@
-import { PrismaClient, Roles, ContentTypes } from '@prisma/client';
+import { PrismaClient, Roles, BlogTags } from '@prisma/client';
 import bcrypt from 'bcrypt';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 const prisma = new PrismaClient();
 
@@ -18,252 +20,160 @@ async function main() {
   await prisma.user.deleteMany({});
   console.log('All existing records deleted.');
 
-  // Create 10 users with hashed passwords
-  const users = await Promise.all([
-    prisma.user.create({
-      data: {
-        name: 'Alice',
-        password: await hashPassword('pass123'),
-        role: Roles.AUTHOR,
-      },
-    }),
-    prisma.user.create({
-      data: {
-        name: 'Bob',
-        password: await hashPassword('secure456'),
-        role: Roles.BASIC,
-      },
-    }),
-    prisma.user.create({
-      data: {
-        name: 'Charlie',
-        password: await hashPassword('ch@rlie789'),
-        role: Roles.AUTHOR,
-      },
-    }),
-    prisma.user.create({
-      data: {
-        name: 'David',
-        password: await hashPassword('d@vid101'),
-        role: Roles.BASIC,
-      },
-    }),
-    prisma.user.create({
-      data: {
-        name: 'Eva',
-        password: await hashPassword('ev@202'),
-        role: Roles.AUTHOR,
-      },
-    }),
-    prisma.user.create({
-      data: {
-        name: 'Frank',
-        password: await hashPassword('fr@nk303'),
-        role: Roles.BASIC,
-      },
-    }),
-    prisma.user.create({
-      data: {
-        name: 'Grace',
-        password: await hashPassword('gr@ce404'),
-        role: Roles.AUTHOR,
-      },
-    }),
-    prisma.user.create({
-      data: {
-        name: 'Henry',
-        password: await hashPassword('h3nry505'),
-        role: Roles.AUTHOR,
-      },
-    }),
-    prisma.user.create({
-      data: {
-        name: 'Isabelle',
-        password: await hashPassword('1s@belle606'),
-        role: Roles.BASIC,
-      },
-    }),
-    prisma.user.create({
-      data: {
-        name: 'Jack',
-        password: await hashPassword('j@ck707'),
-        role: Roles.AUTHOR,
-      },
-    }),
-  ]);
+  // Create Alice user with hashed password
+  const alice = await prisma.user.create({
+    data: {
+      name: 'Alice',
+      password: await hashPassword(process.env.ALICE_PASSWORD || 'defaultpw'),
+      role: Roles.AUTHOR,
+    },
+  });
 
-  // Create blogs with content blocks
-  const blogs = await Promise.all([
-    prisma.blog.create({
-      data: {
-        title: 'Tech Trends Collaborative',
-        summary:
-          'A comprehensive exploration of the latest technological advancements, industry disruptions, and future predictions.',
-        is_published: true,
-        content: {
-          create: [
-            {
-              type: ContentTypes.header,
-              content: 'Introduction to Tech Trends',
-              order: 1,
-            },
-            {
-              type: ContentTypes.text,
-              content:
-                "In this collaborative blog, we explore the cutting-edge developments shaping our technological landscape. From artificial intelligence to quantum computing, we'll delve into the innovations that are set to transform industries and society as we know it.",
-              order: 2,
-            },
-            {
-              type: ContentTypes.image,
-              content: 'https://cdn-icons-png.flaticon.com/512/7134/7134618.png',
-              order: 3,
-            },
-            {
-              type: ContentTypes.header,
-              content: 'Artificial Intelligence and Machine Learning',
-              order: 4,
-            },
-            {
-              type: ContentTypes.text,
-              content:
-                "AI and ML are revolutionizing industries across the board. We'll examine their current applications, potential future uses, and the ethical considerations that come with these powerful technologies.",
-              order: 5,
-            },
-          ],
-        },
-        users: {
-          create: [
-            { user: { connect: { id: users[0].id } } }, // Alice
-            { user: { connect: { id: users[4].id } } }, // Eva
-            { user: { connect: { id: users[7].id } } }, // Henry
-          ],
-        },
+  // Create blog
+  const blog = await prisma.blog.create({
+    data: {
+      title: 'Real Blog Example',
+      tags: {
+        set: [BlogTags.JavaScript, BlogTags.React, BlogTags.WebDevelopment, BlogTags.Frontend],
       },
-    }),
-    prisma.blog.create({
-      data: {
-        title: "Charlie's Coding Corner",
-        summary: 'A comprehensive blog for coding enthusiasts of all levels.',
-        is_published: true,
-        content: {
-          create: [
-            {
-              type: ContentTypes.header,
-              content: 'Welcome to Coding Corner',
-              order: 1,
-            },
-            {
-              type: ContentTypes.text,
-              content:
-                "This blog is designed to be your go-to resource for all things coding. Whether you're a beginner just starting out or an experienced developer looking to refine your skills, you'll find valuable insights here.",
-              order: 2,
-            },
-            {
-              type: ContentTypes.image,
-              content: 'https://cdn-icons-png.flaticon.com/512/2621/2621040.png',
-              order: 3,
-            },
-            {
-              type: ContentTypes.header,
-              content: 'Getting Started with Variables',
-              order: 4,
-            },
-            {
-              type: ContentTypes.text,
-              content:
-                "Variables are fundamental to programming. Let's explore how they work and why they're so important in writing efficient and effective code.",
-              order: 5,
-            },
-          ],
-        },
-        users: { create: { user: { connect: { id: users[2].id } } } },
+      summary:
+        'A comprehensive exploration of the latest technological advancements, industry disruptions, and future predictions.',
+      is_published: true,
+      content: {
+        create: [
+          {
+            content: '<p><strong><span style="font-size: 24pt;">Alice\'s Tech Blog</span></strong></p>',
+            order: 1,
+          },
+          {
+            content:
+              "<p>Welcome to <strong>Alice's Coding Corner</strong>, your ultimate destination for diving deep into the world of programming. Here, I aim to foster a vibrant community of learners and developers. Whether you're just embarking on your coding journey or you're a seasoned programmer seeking to sharpen your skills, you'll discover a wealth of resources, tips, and tutorials that cater to all levels of expertise. My goal is to make coding accessible, enjoyable, and rewarding for everyone.</p>",
+            order: 2,
+          },
+          { content: '<p></p>', order: 3 }, // Empty space
+          {
+            content:
+              '<p><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCmJhOoenheL4Zq4vKcwN-eJ4O3VSsREEtIA&amp;s" alt="Coding Corner" width="225" height="225"></p>',
+            order: 4,
+          },
+          { content: '<p></p>', order: 5 }, // Empty space
+          {
+            content: '<p><strong><span style="font-size: 18pt;">Getting Started with Variables</span></strong></p>',
+            order: 6,
+          },
+          {
+            content:
+              "<p>Variables are the building blocks of programming. They allow you to store and manipulate data effectively. In this section, we'll delve into what variables are, the different types available, and how they function in various programming languages. We'll cover key concepts such as variable declaration, initialization, and scope. By understanding these principles, you'll be better equipped to write clean, efficient code. For example, in Python, variables are created simply by assigning a value, while in languages like Java, you must declare the type of variable before using it. Let's explore these differences and learn how to utilize variables in your coding projects.</p>",
+            order: 7,
+          },
+          { content: '<p></p>', order: 8 }, // Empty space
+          {
+            content:
+              "<p>In addition to variables, we'll also touch on best practices for <strong>naming your variables</strong>. Choosing meaningful names is crucial for maintaining readability and understanding in your code. A good variable name gives context about the data it holds and makes it easier for others (and your future self) to understand the purpose of your code at a glance. We'll share tips on how to adopt a consistent naming convention that will enhance your coding efficiency and promote better collaboration in team projects.</p>",
+            order: 9,
+          },
+          { content: '<p></p>', order: 10 }, // Empty space
+          {
+            content: '<p><strong><span style="font-size: 18pt;">Understanding Data Types</span></strong></p>',
+            order: 11,
+          },
+          {
+            content:
+              "<p>Data types are an essential concept in programming that determine what kind of data a variable can hold. In this section, we will explore various data types, including integers, floats, strings, and booleans. Each data type has its own unique properties and applications, which are crucial for effective programming. We'll also discuss type conversion and the importance of choosing the right data type for your variables to optimize performance and avoid errors.</p>",
+            order: 12,
+          },
+          { content: '<p></p>', order: 13 }, // Empty space
+          {
+            content:
+              '<p><strong><span style="font-size: 18pt;">Control Structures: Making Decisions in Code</span></strong></p>',
+            order: 14,
+          },
+          {
+            content:
+              "<p>Control structures, such as <strong>if statements</strong>, <strong>loops</strong>, and <strong>switch cases</strong>, are fundamental for creating dynamic and responsive programs. We'll break down how these structures work and provide examples in different programming languages. You'll learn how to use control structures to direct the flow of your program based on certain conditions, making your code more versatile and powerful.</p>",
+            order: 15,
+          },
+          { content: '<p></p>', order: 16 }, // Empty space
+          {
+            content: '<p><strong><span style="font-size: 18pt;">Functions: Organizing Your Code</span></strong></p>',
+            order: 17,
+          },
+          {
+            content:
+              '<p><p><span style="text-decoration: underline;">Functions</span></p> are crucial for organizing code into reusable blocks. In this section, we will explore how to define and call functions, as well as the importance of parameters and return values. You\'ll discover how to create your own functions and how they can help improve code readability and maintainability. We\'ll also discuss the difference between built-in functions and user-defined functions, highlighting when and how to use each effectively.</p>',
+            order: 18,
+          },
+          { content: '<p></p>', order: 19 }, // Empty space
+          {
+            content:
+              '<p><strong><span style="font-size: 18pt;">Error Handling: Debugging Your Code</span></strong></p>',
+            order: 20,
+          },
+          {
+            content:
+              '<p>Every programmer encounters errors, and knowing how to handle them is a vital skill. This section will cover common types of errors, such as <strong>syntax errors</strong>, <strong>runtime errors</strong>, and <strong>logical errors</strong>. We will discuss strategies for debugging your code effectively, including using debugging tools and writing test cases. Understanding how to troubleshoot issues will make you a more confident programmer.</p>',
+            order: 21,
+          },
+          { content: '<p></p>', order: 22 }, // Empty space
+          {
+            content:
+              '<p><strong><span style="font-size: 18pt;">Object-Oriented Programming: Understanding OOP Principles</span></strong></p>',
+            order: 23,
+          },
+          {
+            content:
+              '<p>Object-oriented programming (OOP) is a paradigm that uses objects and classes to organize code. In this section, we will explore the four main principles of OOP: <strong>encapsulation</strong>, <strong>inheritance</strong>, <strong>polymorphism</strong>, and <strong>abstraction</strong>. You will learn how to leverage these principles to create scalable and maintainable applications. We will provide examples in popular OOP languages like Python and Java to illustrate how OOP can streamline your coding process.</p>',
+            order: 24,
+          },
+          { content: '<p></p>', order: 25 }, // Empty space
+          {
+            content:
+              '<p><strong><span style="font-size: 18pt;">Web Development Basics: HTML, CSS, and JavaScript</span></strong></p>',
+            order: 26,
+          },
+          {
+            content:
+              "<p>In this section, we will introduce the fundamental technologies of web development: <strong>HTML</strong>, <strong>CSS</strong>, and <strong>JavaScript</strong>. You'll learn how HTML structures web content, how CSS styles it, and how JavaScript adds interactivity. We will provide hands-on examples to help you build a simple web page from scratch, allowing you to apply what you learn in a practical context.</p>",
+            order: 27,
+          },
+          { content: '<p></p>', order: 28 }, // Empty space
+          {
+            content:
+              '<p><strong><span style="font-size: 18pt;">Best Practices in Coding: Writing Clean Code</span></strong></p>',
+            order: 29,
+          },
+          {
+            content:
+              "<p>Writing clean, maintainable code is essential for successful programming. This section will discuss best practices for code organization, documentation, and version control. We'll emphasize the importance of writing code that is easy to read and understand, as well as how to use comments and documentation to clarify your intentions. We'll also cover version control systems like Git, which help you track changes and collaborate with others effectively.</p>",
+            order: 30,
+          },
+          { content: '<p></p>', order: 31 }, // Empty space
+        ],
       },
-    }),
-    prisma.blog.create({
-      data: {
-        title: 'The Blockchain Revolution',
-        summary: 'Exploring the transformative power of blockchain technology across industries.',
-        is_published: true,
-        content: {
-          create: [
-            {
-              type: ContentTypes.header,
-              content: 'Understanding Blockchain',
-              order: 1,
-            },
-            {
-              type: ContentTypes.text,
-              content:
-                "Blockchain is more than just the foundation of cryptocurrencies. It's a revolutionary technology with the potential to transform various sectors, from finance to supply chain management.",
-              order: 2,
-            },
-            {
-              type: ContentTypes.image,
-              content: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCmJhOoenheL4Zq4vKcwN-eJ4O3VSsREEtIA&s',
-              order: 3,
-            },
-            {
-              type: ContentTypes.header,
-              content: 'Real-world Applications',
-              order: 4,
-            },
-            {
-              type: ContentTypes.text,
-              content:
-                "From supply chain management to voting systems, blockchain is finding diverse applications. We'll explore some of the most promising use cases and their potential impact.",
-              order: 5,
-            },
-          ],
-        },
-        users: { create: { user: { connect: { id: users[0].id } } } }, // Alice
+      users: {
+        create: [{ user: { connect: { id: alice.id } } }],
       },
-    }),
-  ]);
+    },
+  });
 
-  // Add comments, including replies
-  await Promise.all([
-    prisma.comments.create({
-      data: {
-        text: 'This collaborative post is incredibly insightful! The diverse perspectives really enrich the content.',
-        user: { connect: { id: users[1].id } },
-        blog: { connect: { id: blogs[0].id } },
-      },
-    }),
-    prisma.comments.create({
-      data: {
-        text: 'Charlie, your coding tutorials are always so clear and easy to follow. Thank you!',
-        user: { connect: { id: users[3].id } },
-        blog: { connect: { id: blogs[1].id } },
-      },
-    }),
-    // Add a comment with a reply
-    prisma.comments.create({
-      data: {
-        text: 'The section on AI ethics is particularly thought-provoking.',
-        user: { connect: { id: users[5].id } },
-        blog: { connect: { id: blogs[0].id } },
-        replies: {
-          create: [
-            {
-              text: 'I agree! The ethical considerations of AI are crucial to discuss.',
-              repliedToName: 'Frank',
-              user: { connect: { id: users[7].id } },
-              blog: { connect: { id: blogs[0].id } },
-            },
-          ],
+  // Add comments
+  await prisma.comments.create({
+    data: {
+      blog: { connect: { id: blog.id } },
+      text: 'Great first post, Alice! Looking forward to more content.',
+      user: { connect: { id: alice.id } }, // Alice commenting on her own blog
+      replies: {
+        create: {
+          blog: { connect: { id: blog.id } },
+          text: 'Wow I replied to myself',
+          user: { connect: { id: alice.id } },
+          repliedToName: 'Alice',
         },
       },
-    }),
-    prisma.comments.create({
-      data: {
-        text: 'This blockchain explanation is very clear. I finally understand the basics!',
-        user: { connect: { id: users[8].id } },
-        blog: { connect: { id: blogs[2].id } },
-      },
-    }),
-  ]);
+    },
+  });
 
-  console.log('Added users with hashed passwords, blogs with content blocks, and comments with replies');
+  console.log('Added Alice as user with hashed password, one blog with content blocks, and two comments');
 }
 
 main()
