@@ -51,11 +51,13 @@ class Validator {
         .notEmpty()
         .withMessage('Title is required')
         .isLength({ max: 100 })
-        .withMessage('Title must be at most 100 characters long'),
+        .withMessage('Title must not exceed 100 characters'),
 
       body('summary')
         .trim()
-        .optional(),
+        .optional()
+        .isLength({ max: 150 })
+        .withMessage('Summary must not exceed 150 characters'),
 
       // ? not necessary? state holds the is_published value
       body('is_published')
