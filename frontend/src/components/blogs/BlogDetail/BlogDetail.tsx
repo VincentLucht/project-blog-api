@@ -1,16 +1,21 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import Tags from '../Tags';
 import ContentRenderer from './ContentRenderer';
 import Comments from './comments/CommentSection';
 import NotFound from '../../partials/NotFound';
 import Loading from '../../partials/Loading';
 
 import { fetchSingularBlog } from './fetchSingularBlog';
+import dayjs from 'dayjs';
 
 interface User {
-  id: string;
   name: string;
+}
+
+interface BlogUsers {
+  user: User;
 }
 
 enum BlogTags {
@@ -54,7 +59,7 @@ export interface CompleteBlogItem {
   posted_on?: string;
   updated_at?: string;
   tags: BlogTags[];
-  // comments?: Comment[]; // ? separated comments separate function
+  users?: BlogUsers[];
 }
 
 export function BlogDetail() {
@@ -86,7 +91,27 @@ export function BlogDetail() {
 
   return (
     <div>
-      <h1 className="mb-4 text-left text-5xl font-extrabold underline">{blog.title}</h1>
+      <h1 className="mb-4 text-left text-5xl font-extrabold">{blog.title}</h1>
+
+      <div className="flex items-baseline gap-1">
+        {blog.users?.map((user, index) => (
+          <div className="text-base leading-none" key={index}>
+            <span>{user.user.name}</span>
+            {index !== (blog.users?.length ?? 0) - 1 && ','}
+          </div>
+        ))}
+        <span className="flex items-center pl-1 text-sm leading-none text-gray-400">
+          on {dayjs(blog?.updated_at).format('D MMM, YYYY')}
+        </span>
+      </div>
+
+      {blog.tags.length === 0 ? (
+        <div className="mb-5 mt-3"></div>
+      ) : (
+        <Tags tags={blog.tags} />
+      )}
+
+      <hr className="mb-10 h-[2.5px] border-none bg-blue-500" />
 
       <ContentRenderer blocks={blog.content} />
 
