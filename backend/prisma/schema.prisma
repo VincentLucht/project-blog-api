@@ -43,7 +43,7 @@ model User {
 model Blog {
   id           String      @id @unique @default(uuid())
   title        String      @db.VarChar(100)
-  summary      String      @db.VarChar(200) @default("No summary provided.")
+  summary      String      @db.VarChar(150) @default("No summary provided.")
   is_published Boolean     @default(false)
   content      ContentBlock[]
   posted_on    DateTime    @default(now())
