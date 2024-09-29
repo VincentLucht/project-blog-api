@@ -88,7 +88,7 @@ class BlogController {
 
   getBlog = asyncHandler(async (req: Request, res: Response) => {
     const blogId = req.params.id;
-    const blog = await db.getBlog(blogId);
+    const blog = await db.getBlogWithUser(blogId);
     return res.json({ data: blog });
   });
 
