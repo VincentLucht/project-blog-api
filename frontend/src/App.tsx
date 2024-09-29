@@ -44,7 +44,11 @@ export default function App() {
 
         <footer></footer>
 
-        <ToastContainer theme="dark" />
+        <ToastContainer
+          theme="dark"
+          position="top-center"
+          className="toast-small-screen"
+        />
       </div>
     </AuthContextProvider>
   );
