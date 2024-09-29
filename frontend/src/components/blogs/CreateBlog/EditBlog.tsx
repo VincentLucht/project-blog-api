@@ -1,5 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useGetToken, useGetUser } from '../../account/useGetToken';
 
 import { Content } from '../BlogDetail/BlogDetail';
@@ -138,6 +138,22 @@ function EditBlog() {
           </div>
 
           <div className="w-full">
+            <div className="mb-2 grid w-full grid-cols-[40%_40%_20%]">
+              <label htmlFor="textEditor" className="font-bold">
+                Text Editor
+              </label>
+              <div></div>
+              <div className="flex justify-end pr-4">
+                <Link
+                  to="/help"
+                  className="h-auto w-[26px] cursor-pointer rounded-full border font-bold transition-colors
+                    duration-150 df hover:bg-blue-500"
+                >
+                  ?
+                </Link>
+              </div>
+            </div>
+
             <Suspense
               fallback={
                 <div className="flex h-64 w-full animate-pulse items-center justify-center rounded-md bg-gray-200">
@@ -146,6 +162,7 @@ function EditBlog() {
               }
             >
               <div
+                id="textEditor"
                 className={`transition-opacity duration-300 ${editorLoaded ? 'opacity-100' : 'opacity-0'}`}
               >
                 <TextEditor
