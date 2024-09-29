@@ -16,6 +16,7 @@ import { ToastContainer } from 'react-toastify';
 import NotFound from './components/partials/NotFound';
 import BlogHub from './components/blogs/CreateBlog/BlogHub';
 import EditBlog from './components/blogs/CreateBlog/EditBlog';
+import Help from './components/blogs/CreateBlog/edit components/Help';
 
 export const API_URL = 'http://localhost:3000';
 
@@ -37,6 +38,7 @@ export default function App() {
               <Route path="/sign-up" element={<SignUp />} />
               <Route path="/account" element={<Account />} />
               <Route path="/:id" element={<BlogDetail />} />
+              <Route path="/help" element={<Help />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>
