@@ -17,6 +17,8 @@ app.use(express.json()); // ? parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // ? allow req.body
 
 app.use('/', router);
-app.listen(3000, () => {
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
   console.log('Listening on Port 3000');
 });
