@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import dayjs from 'dayjs';
+
+import Tags from './Tags';
 import { BlogTags } from './BlogDetail/BlogDetail';
-import convertTag from './util/convertTag';
 
 export interface User {
   user: {
@@ -52,22 +53,12 @@ export function Blog({
               {index !== users.length - 1 && ','}
             </div>
           ))}
-          <span className="flex items-center text-sm leading-none text-gray-400">
+          <span className="flex items-center pl-1 text-sm leading-none text-gray-400">
             on {dayjs(posted_on).format('D MMM, YYYY')}
           </span>
         </div>
 
-        {/* tags */}
-        <div className="mb-5 mt-3 flex cursor-default flex-wrap gap-3">
-          {tags?.map((tag, index) => (
-            <div
-              className="rounded-md border border-gray-300 px-2 py-1 transition-colors duration-200"
-              key={index}
-            >
-              {convertTag(tag)}
-            </div>
-          ))}
-        </div>
+        {tags?.length === 0 ? <div className="mb-5 mt-3"></div> : <Tags tags={tags} />}
 
         <div className="text-gray-300">{summary}</div>
 
