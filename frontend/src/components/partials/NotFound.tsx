@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 function NotFound() {
   return (
-    <div className="flex flex-col items-center justify-center calc-h-vw-1">
+    <div className="flex flex-col items-center justify-center calc-h-vw-2">
       <img src="/cat404.webp" alt="" className="mb-4 w-full max-w-[684px]" />
 
       <h1 className="mb-4 text-4xl font-bold text-white">404 - Page Not Found</h1>
