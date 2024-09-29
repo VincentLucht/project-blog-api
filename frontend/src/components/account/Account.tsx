@@ -9,8 +9,13 @@ function Account() {
 
   return (
     <div>
-      <h2>Good day, {user.name}</h2>
-      <button onClick={() => logout()}>Logout</button>
+      <h2 className="h2">
+        Good day, <span className="ml-1">{user.name}</span>
+      </h2>
+
+      <button className="mt-8 h-8 w-28 prm-button-red" onClick={() => logout()}>
+        Logout
+      </button>
     </div>
   );
 }
