@@ -73,7 +73,7 @@ class AuthController {
 
       if (user && (await bcrypt.compare(req.body.password, user.password))) {
         const payload = { id: user.id, name: user.name, role: user.role };
-        const token = jwt.sign(payload, this.secretKey, { expiresIn: '1 day' });
+        const token = jwt.sign(payload, this.secretKey, { expiresIn: '14 days' });
         return res.json({ success: true, token: `Bearer ${token}` });
       } else {
         return res.status(401).json({ success: false, message: 'Authentication failed' });
