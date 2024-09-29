@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom';
-import { useAuthContext } from '../auth/useAuthContext';
+import { useGetUser } from '../account/useGetToken';
 import { Link } from 'react-router-dom';
 
 const NAV_ITEMS = [
@@ -9,13 +9,23 @@ const NAV_ITEMS = [
 ];
 
 function Header() {
-  const { isLoggedIn } = useAuthContext();
+  const user = useGetUser();
+  const userRole = user?.role;
   const location = useLocation();
 
   const isActive = (path: string) => {
-    // check if the path is a blog id or another route
+    const isBlogPostPath = (path: string) => {
+      return (
+        /^\/[a-zA-Z0-9-]+$/.test(path) && !NAV_ITEMS.some((item) => item.path === path)
+      );
+    };
+
     if (path === '/') {
-      return location.pathname === '/';
+      // Check if the path is the root path, but not '/login'
+      return (
+        location.pathname === '/' ||
+        (isBlogPostPath(location.pathname) && location.pathname !== '/login')
+      );
     }
     return location.pathname.startsWith(path);
   };
@@ -28,7 +38,10 @@ function Header() {
       <div className="text-2xl font-black sm:text-3xl">Odin&apos;s Code Forge</div>
       <nav className="gap-4 df">
         {NAV_ITEMS.map(({ path, label, authRequired }) => {
-          if (authRequired && !isLoggedIn) return null;
+          if (authRequired && !user) return null;
+          if (userRole === 'BASIC' && path === '/hub') {
+            return null;
+          }
 
           return (
             <Link
@@ -40,7 +53,8 @@ function Header() {
             </Link>
           );
         })}
-        {!isLoggedIn && (
+
+        {!user && (
           <Link
             to="/login"
             className={`nav-button
