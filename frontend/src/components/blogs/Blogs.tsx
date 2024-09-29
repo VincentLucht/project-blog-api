@@ -29,14 +29,6 @@ function Blogs() {
       });
   }, []);
 
-  const onSearchResult = (results: BlogItem[]) => {
-    if (results.length === 0) {
-      setData(originalData);
-    } else {
-      setData(results);
-    }
-  };
-
   if (loading) return <Loading />;
   if (error === 'Load failed') return <ConnectionError />;
   if (error) return <div>Error: {error}</div>;
@@ -44,7 +36,7 @@ function Blogs() {
   return (
     <>
       <div className="mb-4 gap-5 df">
-        <SearchBar onSearchResult={onSearchResult} />
+        <SearchBar setBlogs={setData} originalBlogs={originalData} />
 
         <SortOptions blogs={data} setBlogs={setData} />
       </div>
@@ -52,12 +44,12 @@ function Blogs() {
       <FilterOptions setBlogs={setData} originalData={originalData} />
 
       <div
-        className={`${data.length !== 0 ? 'grid auto-rows-auto grid-cols-1 items-start gap-16 lg:grid-cols-2' : ''}
+        className={`${data && data.length !== 0 ? 'grid auto-rows-auto grid-cols-1 items-start gap-16 lg:grid-cols-2' : ''}
           pb-8 pt-4`}
       >
         {data.length === 0 && (
           <NoMessageFound
-            message="No Blogs founds found here..."
+            message="No Blogs found here..."
             secondMessage="Are you sure you typed the correct name?"
           />
         )}
