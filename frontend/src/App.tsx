@@ -18,7 +18,7 @@ import BlogHub from './components/blogs/CreateBlog/BlogHub';
 import EditBlog from './components/blogs/CreateBlog/EditBlog';
 import Help from './components/blogs/CreateBlog/edit components/Help';
 
-export const API_URL = 'http://localhost:3000';
+export const API_URL = import.meta.env.VITE_API_URL;
 
 export default function App() {
   return (
