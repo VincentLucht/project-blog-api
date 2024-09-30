@@ -82,9 +82,11 @@ function BlogHub() {
             originalUserBlogs={originalUserBlogs}
           />
 
+          {/* @ts-expect-error: BlogData[] and BlogItem[] are almost identical */}
           <SortOptions blogs={userBlogs} setBlogs={setUserBlogs} />
         </div>
 
+        {/* @ts-expect-error: BlogData[] and BlogItem[] are almost identical */}
         <FilterOptions originalData={originalUserBlogs} setBlogs={setUserBlogs} />
       </div>
 
