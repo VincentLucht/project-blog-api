@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: Odin's Code Forge
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm run serve
+    publishDir: dist
