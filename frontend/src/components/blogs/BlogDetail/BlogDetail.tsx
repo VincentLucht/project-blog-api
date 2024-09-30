@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import Tags from '../Tags';
-import ContentRenderer from './ContentRenderer';
+import ContentRenderer from './ContentRendererTest';
 import Comments from './comments/CommentSection';
 import NotFound from '../../partials/NotFound';
 import Loading from '../../partials/Loading';

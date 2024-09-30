@@ -11,7 +11,7 @@ import { isAllowedToEdit } from './util/isAllowedToEdit';
 import { Reorder } from 'framer-motion';
 
 import AddContentBlockButton from './edit components/AddContentBlockButton';
-import ContentRenderer from '../BlogDetail/ContentRenderer';
+import ContentRenderer from '../BlogDetail/ContentRendererTest';
 import AutoResizeTextArea from './edit components/AutoResizeTextArea';
 import UpdateBlogButton from './edit components/UpdateBlogButton';
 import DeleteBlockButton from './edit components/DeleteBlogButton';
