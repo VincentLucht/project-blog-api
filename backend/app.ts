@@ -5,14 +5,12 @@ import cors from 'cors';
 dotenv.config();
 const app = express();
 
-console.log('FRONTEND_URL:', process.env.FRONTEND_URL); // ! REMOVE
-
 // Configure CORS globally
 app.use(
   cors({
-    origin: '*', // ! REMOVE, CHANGE TO FRONTEND
+    origin: '*', // ! allow for portfolio showcase
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true, // ! REMOVE
+    credentials: true, // ! allow for portfolio showcase
   }),
 );
 
