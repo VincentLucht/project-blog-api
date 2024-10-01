@@ -35,12 +35,18 @@ function Login() {
   // handle form submission
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    const toastId = toast.loading('Updating Blog...');
 
     try {
       // Handle successful login here
       const response = await handleLogin(name, password);
       login(response.token);
-      toast.success('Login successful!');
+      toast.update(toastId, {
+        render: 'Login successful!',
+        type: 'success',
+        isLoading: false,
+        autoClose: 5000,
+      });
       navigate('/');
     } catch (error) {
       // Check if username or pw are wrong
@@ -136,6 +142,23 @@ function Login() {
             Don&apos;t have an account?
             <span className="font-bold hover:underline">
               <Link to="/sign-up">Sign Up</Link>
+            </span>
+          </div>
+
+          <div className="gap-1 df">
+            Want to test all features?
+            <span className="font-bold hover:underline">
+              <Link
+                to="/sign-up"
+                onClick={(e) => {
+                  e.preventDefault(); // Prevent navigation
+                  setName('Guest');
+                  setPassword('guest123');
+                  void onSubmit(e); // Trigger form submission
+                }}
+              >
+                Sign In as Guest
+              </Link>
             </span>
           </div>
         </form>
