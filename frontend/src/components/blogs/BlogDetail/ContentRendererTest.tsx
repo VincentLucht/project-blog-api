@@ -37,7 +37,10 @@ export default function ContentRenderer({
     contentItem.order = index + 1;
 
     const contentElement = (
-      <div className="grid grid-cols-[80%_20%] gap-2 sm:grid-cols-[85%_15%] lg:grid-cols-[87%_13%]">
+      <div
+        className={`grid gap-2
+          ${isCreationMode ? 'grid-cols-[80%_20%] sm:grid-cols-[85%_15%] lg:grid-cols-[87%_13%]' : ''}`}
+      >
         {/* rendered content */}
         <div
           className={`${contentItem.content === '<p></p>' ? 'mb-5' : 'mb-2'} text-left`}
