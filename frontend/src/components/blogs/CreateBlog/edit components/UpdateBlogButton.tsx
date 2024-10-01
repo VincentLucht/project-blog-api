@@ -39,7 +39,7 @@ function UpdateBlogButton({
         };
 
         // Show a loading toast
-        const toastId = toast.loading('Updating blog...');
+        const toastId = toast.loading('Updating Blog...');
 
         updateBlog(updatedBlogItem, token)
           .then(() => {

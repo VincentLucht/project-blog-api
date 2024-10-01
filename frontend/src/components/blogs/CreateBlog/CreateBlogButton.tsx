@@ -13,14 +13,26 @@ function CreateBlogButton() {
   }
 
   const onClick = () => {
+    // Create a loading toast
+    const toastId = toast.loading('Creating Blog...');
+
     createBlog(token)
       .then((blog) => {
+        toast.update(toastId, {
+          render: 'Successfully created a new Blog',
+          type: 'success',
+          isLoading: false,
+          autoClose: 5000,
+        });
         navigate(`/hub/${blog.blog.id}`);
-        toast.success('Successfully created a new Blog');
       })
       .catch((e: { message: string | undefined }) => {
-        if (e.message) toast.error(`${e.message}`);
-        else toast.error('There was an error while creating a new Blog');
+        toast.update(toastId, {
+          render: e.message ?? 'There was an error while creating a new Blog',
+          type: 'error',
+          isLoading: false,
+          autoClose: 5000,
+        });
       });
   };
 
