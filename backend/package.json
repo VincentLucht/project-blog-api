@@ -4,8 +4,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx ts-node-dev --respawn app.ts",
-    "db": "npx ts-node ./src/scripts/script.ts"
+    "dev": "npx ts-node-dev --respawn src/app.ts",
+    "db": "npx ts-node ./src/scripts/script.ts",
+    "postinstall": "prisma generate",
+    "build": "tsc",
+    "start": "node dist/app.js"
   },
   "keywords": [],
   "author": "",
