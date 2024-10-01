@@ -18,8 +18,6 @@ function Comments() {
   const [newCommentText, setNewCommentText] = useState('');
   const [comments, setComments] = useState<Comment[]>([]);
 
-  console.log(comments);
-
   useEffect(() => {
     function getBlogComments() {
       if (!id) return;
