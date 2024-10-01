@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Blog" ALTER COLUMN "summary" SET DATA TYPE VARCHAR(200);
