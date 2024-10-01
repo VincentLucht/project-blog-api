@@ -63,7 +63,6 @@ class BlogController {
 
   searchBlog = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const { title } = req.body;
-    console.log(title);
     if (!title) return res.status(404).json({ error: 'Not found' });
 
     const foundBlogs = await db.searchBlog(title);
@@ -177,7 +176,6 @@ class CommentController {
   replyToComment = asyncHandler(async (req: Request, res: Response) => {
     const user = req.user as User;
     if (!user) return res.status(401).json({ message: 'You are not logged in' });
-    console.log('Replied to comment');
 
     if (checkValidationError(req, res)) return;
 
