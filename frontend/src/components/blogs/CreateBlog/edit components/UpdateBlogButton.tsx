@@ -38,12 +38,25 @@ function UpdateBlogButton({
           content: blocks,
         };
 
+        // Show a loading toast
+        const toastId = toast.loading('Updating blog...');
+
         updateBlog(updatedBlogItem, token)
           .then(() => {
-            toast.success('Successfully updated the blog');
+            toast.update(toastId, {
+              render: 'Successfully updated the blog',
+              type: 'success',
+              isLoading: false,
+              autoClose: 5000,
+            });
           })
           .catch(() => {
-            toast.error('An error occurred while updating the blog');
+            toast.update(toastId, {
+              render: 'An error occurred while updating the blog',
+              type: 'error',
+              isLoading: false,
+              autoClose: 5000,
+            });
           });
       }}
       className="h-12 w-full prm-button"
