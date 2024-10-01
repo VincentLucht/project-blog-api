@@ -33,17 +33,13 @@ function Login() {
   }, [errors]);
 
   // handle form submission
-  const onSubmit = async (e: FormEvent, isGuest = false) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const toastId = toast.loading('Signing In...');
 
     try {
       // Handle successful login here
-      let response;
-      isGuest
-        ? (response = await handleLogin(name, password))
-        : (response = await handleLogin('Guest', 'guest'));
-
+      const response = await handleLogin(name, password);
       login(response.token);
       toast.update(toastId, {
         render: 'Login successful!',
@@ -162,8 +158,9 @@ function Login() {
               <Link
                 to="/sign-up"
                 onClick={(e) => {
-                  e.preventDefault();
-                  void onSubmit(e, true); // Trigger form submission
+                  e.preventDefault(); // Prevent navigation
+                  setName('Guest');
+                  setPassword('guest');
                 }}
               >
                 Sign In as Guest
