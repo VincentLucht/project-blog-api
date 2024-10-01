@@ -178,6 +178,7 @@ async function main() {
       title: 'Feature Showcase',
       tags: [BlogTags.WebDevelopment, BlogTags.FullStack],
       summary: 'A showcase of the Text editor: Format, style, and enrich content with colors, media, and more tools!',
+      is_published: true,
       content: {
         create: [
           {
@@ -273,6 +274,7 @@ async function main() {
   });
 
   console.log('Added Alice as user with hashed password, one blog with content blocks, and two comments');
+  console.log('Added Guest user and Showcase User with one blog');
 }
 
 main()
