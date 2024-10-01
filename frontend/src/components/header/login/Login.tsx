@@ -35,7 +35,7 @@ function Login() {
   // handle form submission
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const toastId = toast.loading('Updating Blog...');
+    const toastId = toast.loading('Signing In...');
 
     try {
       // Handle successful login here
@@ -49,6 +49,13 @@ function Login() {
       });
       navigate('/');
     } catch (error) {
+      toast.update(toastId, {
+        render: 'Login failed!',
+        type: 'error',
+        isLoading: false,
+        autoClose: 5000,
+      });
+
       // Check if username or pw are wrong
       const loginError = error as Error;
       if (loginError.message === 'Authentication failed') {
@@ -153,7 +160,7 @@ function Login() {
                 onClick={(e) => {
                   e.preventDefault(); // Prevent navigation
                   setName('Guest');
-                  setPassword('guest123');
+                  setPassword('guest');
                   void onSubmit(e); // Trigger form submission
                 }}
               >
